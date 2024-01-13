@@ -1,5 +1,3 @@
-
-https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/597aab51-547b-402b-bae9-6285930b66d8
 # KSTET: DLL Side-Loading Exploit
 
 *Notice*: The following exploit, and its procedures are based on the original [Blog](https://fluidattacks.com/blog/vulnserver-kstet-alternative/)
@@ -224,7 +222,7 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
       * We can see there are nine possible `jmp esp` instructions in the essefunc dll that we can use, any should work. We will use the last one `0x625014E6`
 8. Use a program like [exploit3.py](./SourceCode/exploit3.py) to verify that this works.
 
-	Uploading Exploit3.mp4…
+	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/597aab51-547b-402b-bae9-6285930b66d8
 
    1. Click on the black button highlighted below, enter in the address we decided in the previous step
 
