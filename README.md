@@ -1,4 +1,6 @@
-# KSTET: DLL Side-Loading Exploit \<Sideloading exploiting\>
+
+https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/597aab51-547b-402b-bae9-6285930b66d8
+# KSTET: DLL Side-Loading Exploit
 
 *Notice*: The following exploit, and its procedures are based on the original [Blog](https://fluidattacks.com/blog/vulnserver-kstet-alternative/)
 ___
@@ -221,8 +223,8 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
 
       * We can see there are nine possible `jmp esp` instructions in the essefunc dll that we can use, any should work. We will use the last one `0x625014E6`
 8. Use a program like [exploit3.py](./SourceCode/exploit3.py) to verify that this works.
-	
-	<video src="Exploit3.mp4" controls title="Title"></video> <!-- Replace -->
+
+	Uploading Exploit3.mp4…
 
    1. Click on the black button highlighted below, enter in the address we decided in the previous step
 
@@ -250,7 +252,7 @@ Now that we have all the necessary parts for the creation of a exploit we will d
 ### Exploitation
 1. We know from one of our previous runs of `mona.py` (`!mona findmsp`) that we have a very limited amount of space following the overwritten return address we use in the *EIP* register. As we have done in previous exploits we will preform a short relative jump to the start of the buffer so we can use the sixty six bytes that precede our return address for our first stage shell code.
 
-	<video src="Exploit4-Create.mp4" controls title="Title"></video>
+	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/f0c15355-9098-4e24-8c60-48652d86bf92
 
    1. Set a breakpoint at the `JMP ESP` instruction as we did in the previous section
 
@@ -291,8 +293,8 @@ Now that we have all the necessary parts for the creation of a exploit we will d
 	)
 	```
 3. Restart the VChat server, and set a breakpoint at the `JMP ESP` instruction, run the [exploit4.py](./SourceCode/exploit4.py) program and ensure that it works!
-	
-	<video src="Exploit4.mp4" controls title="Title"></video>
+
+	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/c509b866-ddc1-4fcf-8eff-3adc1a85d92b
 
 #### Malicious DLLs
 As was previously discussed in the introduction of this walkthrough DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library), these are libraries that are loaded into memory, and shared between processes. If a program is set to use a custom DLL, or is not statically-linked then the addresses for the functions in a DLL will be resolved by a [Runtime Dynamic Linker](https://learn.microsoft.com/en-us/windows/win32/dlls/run-time-dynamic-linking) or a [Loadtime Dynamic Linker](https://learn.microsoft.com/en-us/windows/win32/dlls/load-time-dynamic-linking). In our case the use of the [LoadLibraryA](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) means we will be evoking the [Runtime Dynamic Linker](https://learn.microsoft.com/en-us/windows/win32/dlls/run-time-dynamic-linking). Once we have loaded and linked our malicious DLL to the executable we can use any function located within the DLL. Additionally if the DLL contains a [DLLMain(...)](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library#the-dll-entry-point) function, this will be ran once when the DLL is loaded. This is not present in all DLLs and when it is will often be used to initialize any data structures or variables that will be needed by the DLL functions. This should **not be confused** with DLL load order hijacking attacks which exploit the [search order](https://learn.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-search-order) Windows uses for resolving DLLS.
@@ -330,8 +332,7 @@ $ sudo impacket-smbserver -smb2support ABCD .
 * `A`: Name of the current Share. This is chosen to be short as we would complicate the shellcode generation otherwise.
 * `.`: This is the current directory we are in, we can specify a path to share a specific directory. 
 
-
-<video src="DLL.mp4" controls title="Title"></video>
+	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/ee57745f-bddc-4f6f-8788-372524798848
 
 #### Shellcode Generation
 We will as has been stated many times previously be using the LoadLibraryA function which has the following function signature: 
@@ -383,7 +384,7 @@ Now we can see what happens to all the resulting stdout values after the loop ha
 * [`tac`](https://www.man7.org/linux/man-pages/man1/tac.1.html): The stdout values produced by the body of the loop are piped into the *tac* command, this reverses the input printing it to stdout (We push the bytes in reverse order to the stack)
 * [`sed`](https://www.gnu.org/software/sed/manual/sed.html): The results of *tac* are printed to stdout and are piped into *sed* a stream editor, this goes through the input and replaces/inserts (`s/`) the start of the string (`^`), with `push 0x` without case conversion `/g`.
 
-<video src="ADDR.mp4" controls title="Title"></video>
+	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/ea2f908f-3bb5-4600-8005-5848537456cf
 
 1. First we need to move our stack pointer by modifying the `ESP` register so it is not above our shellcode.
 	```
@@ -480,7 +481,7 @@ Now we we have everything we need to exploit the VChat server using a DLL sidelo
 		```
 2. Now we can verify the shellcode is being transmitted properly
 
-	<video src="Exploit5.mp4" controls title="Title"></video>
+	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/e40033a1-dddb-498c-82f3-305e54339134
 
    1. Click on the black button highlighted below, enter in the address we decided in the previous step
 
@@ -527,7 +528,7 @@ Now we we have everything we need to exploit the VChat server using a DLL sidelo
 	* `.`: This is the current directory we are in, we can specify a path to share a specific directory. 
 5. Run the [exploit5.py](./SourceCode/exploit5.py) program!
 
-<video src="FIN.mp4" controls title="Title"></video>
+	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/8da0d1be-485d-4e47-93b2-91c53a917773
 
 ## VChat and Exploit Code
 
