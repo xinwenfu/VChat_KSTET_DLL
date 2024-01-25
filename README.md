@@ -1,4 +1,4 @@
-# VChat KSTET: DLL Side-Loading Exploit
+# KSTET: DLL Side-Loading Exploit
 
 *Notice*: The following exploit, and its procedures are based on the original [Blog](https://fluidattacks.com/blog/vulnserver-kstet-alternative/)
 ___
@@ -25,7 +25,7 @@ DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot
 		# Create a the DLL with an 
 		$ gcc.exe -shared -o essfunc.dll -Wl,--out-implib=libessfunc.a -Wl,--image-base=0x62500000 essfunc.o
 		```
-         * ```-shared -o essfunc.dll```: We create a DLL "essefunc.dll", these are equivalent to the [shared library](https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html) in Linux. 
+         * ```-shared -o essfunc.dll```: We create a DLL "essfunc.dll", these are equivalent to the [shared library](https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html) in Linux. 
          * ```-Wl,--out-implib=libessfunc.a```: We tell the linker to generate generate a import library "libessfunc".a" [2].
          * ```-Wl,--image-base=0x62500000```: We specify the [Base Address](https://learn.microsoft.com/en-us/cpp/build/reference/base-base-address?view=msvc-170) as ```0x62500000``` [3].
          * ```essfunc.o```: We build the DLL based off of the object file "essfunc.o"
@@ -35,9 +35,9 @@ DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot
 		```
          * ```vchat.c```: The source file is "vchat.c"
          * ```-o vchat.exe```: The output file will be the executable "vchat.exe"
-         * ```-lws2_32 ./libessfunc.a```: Link the executable against the import library "libessfunc.a", enabling it to use the DLL "essefunc.dll"
+         * ```-lws2_32 ./libessfunc.a```: Link the executable against the import library "libessfunc.a", enabling it to use the DLL "essfunc.dll"
    2. Launch the VChat application 
-		* Click on the Icon in File Explorer when it is in the same directory as the essefunc dll
+		* Click on the Icon in File Explorer when it is in the same directory as the essfunc dll
 2. **Linux**: Run NMap
 	```sh
 	# Replace the <IP> with the IP of the machine.
@@ -219,7 +219,7 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
 
 	<img src="Images/I15.png" width=600>
 
-      * We can see there are nine possible `jmp esp` instructions in the essefunc dll that we can use, any should work. We will use the last one `0x625014E6`
+      * We can see there are nine possible `jmp esp` instructions in the essfunc dll that we can use, any should work. We will use the last one `0x625014E6`
 8. Use a program like [exploit3.py](./SourceCode/exploit3.py) to verify that this works.
 
 	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/597aab51-547b-402b-bae9-6285930b66d8
@@ -236,7 +236,7 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
 
 		<img src="Images/I18.png" width=600>
 
-         * Notice that the EIP now points to an essefunc.dll address!
+         * Notice that the EIP now points to an essfunc.dll address!
 	4. Once the overflow occurs click the *step into* button highlighted below 
 
 		<img src="Images/I19.png" width=600>
@@ -581,9 +581,6 @@ We next zero out the `EBX` register, this is so we can push the NULL value store
 We then push the UNC string in reverse order to the stack, followed by the `ESP` registers value as this now points to the start of the UNC string which is our single argument to the LoadLibraryA function.
 
 Finally we put the address of the LoadLibrayA function as found by Arwin into the `ebx` register (This is arbitrary), and call the function.
-
-
-
 
 ## Test code
 1. [exploit0.py](./SourceCode/exploit0.py): Sending 100 `A`s to crash the server.
