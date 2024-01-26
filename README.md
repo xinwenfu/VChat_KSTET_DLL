@@ -1,4 +1,4 @@
-# KSTET: DLL Side-Loading Exploit
+# VChat KSTET Exploit: DLL Side-Loading
 
 *Notice*: The following exploit, and its procedures are based on the original [Blog](https://fluidattacks.com/blog/vulnserver-kstet-alternative/)
 ___
