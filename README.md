@@ -11,7 +11,7 @@ DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot
 
 
 
-
+**Notice**: Please setup the Windows and Linux systems as described in [SystemSetup](./SystemSetup/README.md)!
 ## Exploitation
 ### PreExploitation
 1. **Windows**: Setup Vchat
