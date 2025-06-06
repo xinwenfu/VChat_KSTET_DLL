@@ -70,6 +70,9 @@ The following sections cover the process that should (Or may) be followed when p
 
 ### Information Collecting
 We want to understand the VChat program and how it works in order to exploit it effectively. Before diving into the specifics of how VChat behaves, the most important information for us is the IP address of the Windows VM that runs VChat and the port number that VChat runs on.
+
+<details>
+
 1. Launch the VChat application.
 	* Click on the Icon in File Explorer when it is in the same directory as the essfunc DLL.
 	* You can also use the simple [VChatGUI](https://github.com/daintyjet/VChatGUI) program to launch the executable.
@@ -103,6 +106,9 @@ We want to understand the VChat program and how it works in order to exploit it 
 
 	* Now, trying every possible combination of strings would get quite tiresome, so we can use the technique of *fuzzing* to automate this process, as discussed later in the exploitation section.
 	* In this case we will do some fuzzing to keep the exploit sections relatively consistent, but as you can see we know crashing this command will not take much!
+
+</details>
+
 ### Dynamic Analysis
 This exploitation phase is where we launch the target application or binary and examine its behavior based on the input we provide. We can do this both using automated fuzzing tools and manually generated inputs. We do this to discover how to construct a payload to modify VChat's behavior. We want to construct an attack string as follows: `padding-bytes|address-to-overwrite-return-address|shell-code`, where | means concatenation. Therefore, we need to know how many bytes are required in order to properly pad and align our overflow to overwrite critical sections of data.
 
