@@ -168,7 +168,7 @@ Start a boofuzz virtual environment so that it does not interfere with other Pyh
 └─$ 
 ```
 
-2. Run the fuzzing script [boofuzz-vchat-LTER.py](SourceCode/boofuzz-vchat-KSTET-DLL.py)
+2. Run the fuzzing script [boofuzz-vchat-KSTET-DLL.py](SourceCode/boofuzz-vchat-KSTET-DLL.py)
 
 ```
 python boofuzz-vchat-KSTET-DLL.py
