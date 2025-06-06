@@ -143,7 +143,7 @@ This exploitation phase is where we launch the target application or binary and 
         3. Notice that a Terminal was opened when you clicked "Open". Now you should see the program output in the displayed terminal.
 
 			<img src="Images/I3-3.png" width=800>
-3. Ensure that the execution in not paused, click the red arrow (Top Left).
+3. Ensure that the execution is not paused, click the red arrow (Top Left).
 
 	<img src="Images/I3-4.png" width=800>
 
