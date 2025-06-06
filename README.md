@@ -148,36 +148,34 @@ This exploitation phase is where we launch the target application or binary and 
 	<img src="Images/I3-4.png" width=800>
 
 #### Fuzzing
-SPIKE is a C based fuzzing tool commonly used by professionals, it is available in [kali Linux](https://www.kali.org/tools/spike/). Here is [a tutorial](http://thegreycorner.com/2010/12/25/introduction-to-fuzzing-using-spike-to.html) of the SPIKE tool by vulnserver's author [Stephen Bradshaw](http://thegreycorner.com/) in addition to [other resources](https://samsclass.info/127/proj/p18-spike.htm) for guidance. The source code is still available on [GitHub](https://github.com/guilhermeferreira/spikepp/) and still maintained on [GitLab](https://gitlab.com/kalilinux/packages/spike).
+
+We use [boofuzz](https://boofuzz.readthedocs.io/en/stable/index.html) for fuzzing, in which methodologically generated random data is injected into the target. It is hoped that the random data will cause the target to perform erratically, for example, crash. If that happens, bugs are found in the target.
 
 1. Open a terminal on the **Kali Linux Machine**.
-2. Create a file ```KSTET.spk``` file with your favorite text editor. We will use a SPIKE script and interpreter rather than writing our own C based fuzzer. We will be using the [mousepad](https://github.com/codebrainz/mousepad) text editor in this walkthrough, though any editor may be used.
-	```sh
-	$ mousepad KSTET.spk
-	```
-	* If you do not have a GUI environment, an editor like [nano](https://www.nano-editor.org/), [vim](https://www.vim.org/) or [emacs](https://www.gnu.org/software/emacs/) could be used.
-3. Define the FUZZER parameters, we are using [SPIKE](https://www.kali.org/tools/spike/) with the ```generic_send_tcp``` interpreter for TCP based fuzzing.
 
-	```
-	s_readline();
-	s_string("KSTET ");
-	s_string_variable("*");
-	```
-    * ```s_readline();```: Return the line from the server.
-    * ```s_string("KSTET ");```: Specifies that we start each message with the *String* KSTET.
-    * ```s_string_variable("*");```: This specifies a String that we will mutate over. We can set it to * to say "any", as we do in our case.
-4. Use the Spike Fuzzer.
-	```
-	$ generic_send_tcp <VChat-IP> <Port> <SPIKE-Script> <SKIPVAR> <SKIPSTR>
+Go into the boofuzz folder
+```
+┌──(kali㉿kali)-[~]
+└─$ cd ~/boofuzz
+```
 
-	# Example
-	# generic_send_tcp 10.0.2.13 9999 KSTET.spk 0 0
-	```
-    * ```<VChat-IP>```: Replace this with the IP of the target machine.
-	* ```<Port>```: Replace this with the target port.
-	* ```<SPIKE-Script>```: Script to run through the interpreter.
-	* ```<SKIPVAR>```: Skip to the n'th **s_string_variable**, 0 -> (S - 1) where S is the number of variable blocks.
-	* ```<SKIPSTR>```: Skip to the n'th element in the array that is **s_string_variable**, they internally are an array of strings used to fuzz the target.
+Start a boofuzz virtual environment so that it does not interfere with other Pyhting settings.
+```                                                                                                                                          
+┌──(kali㉿kali)-[~/boofuzz]
+└─$ source env/bin/activate
+                                                                                                                                          
+┌──(env)─(kali㉿kali)-[~/boofuzz]
+└─$ 
+```
+
+2. Run the fuzzing script [boofuzz-vchat-LTER.py](SourceCode/boofuzz-vchat-KSTET-DLL.py)
+
+```
+python boofuzz-vchat-KSTET-DLL.py
+```
+*boofuzz-vchat-KSTET-DLL.py* works as follows: builds a connection to the target, creates a message template with some fixed fields and a fuzzable field that will change, and then begins to inject the random data case by case into the target. One test case refers to one random message injected into the target.
+
+
 5. Observe the results on VChat's terminal output.
 
 	<img src="Images/I4.png" width=600>
