@@ -571,7 +571,7 @@ Now we have everything we need to exploit the VChat server using the DLL sideloa
 
 	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/8da0d1be-485d-4e47-93b2-91c53a917773
 
-The diagram below shows the stack layout when the malicious string is injected on the stack. The JMP ESP overwrite the return address of the victim function. When the victim function returns, it runs the JMP SHORT instruction. The JMP SHORT jumps to the start of the buffer and runs the shellcode, which loads the remote DLL.
+The diagram below shows the stack layout when the malicious string is injected on the stack. The *JMP ESP* overwrites the return address of the victim function. When the victim function returns, it runs the *JMP SHORT* instruction. The *JMP SHORT* jumps to the start of the buffer and runs the shellcode, which loads the remote DLL.
 ``` 
    |-----------------------------------|
    | b'C' * (24)                       |
