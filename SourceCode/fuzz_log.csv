@@ -1,0 +1,108 @@
+2025-06-06T21:36:59.559526,info,,,Web interface can be found at http://localhost:26000
+2025-06-06T21:36:59.561108,info,,,Opening target connection (10.0.2.15:9999)...
+2025-06-06T21:36:59.563578,info,,,Connection opened.
+2025-06-06T21:36:59.567314,open test case,,,Test case 1: KSTET:[KSTET.KSTET-STRING:0]
+2025-06-06T21:36:59.567357,info,,,Type: String
+2025-06-06T21:36:59.567397,open step,,,"Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()"
+2025-06-06T21:36:59.567673,open step,,,Fuzzing Node 'KSTET'
+2025-06-06T21:36:59.567759,info,,,Sending 37 bytes...
+2025-06-06T21:36:59.568218,send,37,4b 53 54 45 54 20 21 40 23 24 25 25 5e 23 24 25 23 24 40 23 24 25 24 24 40 23 24 25 5e 5e 2a 2a 28 28 29 0d 0a,b'KSTET !@#$%%^#$%#$@#$%$$@#$%^^**(()\r\n'
+2025-06-06T21:36:59.568256,open step,,,Contact target monitors
+2025-06-06T21:36:59.568282,open step,,,Cleaning up connections from callbacks
+2025-06-06T21:36:59.568309,pass,,,No crash detected.
+2025-06-06T21:36:59.568332,open step,,,Sleep between tests.
+2025-06-06T21:36:59.568357,info,,,sleeping for 1.000000 seconds
+2025-06-06T21:37:00.851996,open test case,,,Test case 2: KSTET:[KSTET.KSTET-STRING:1]
+2025-06-06T21:37:00.852027,info,,,Type: String
+2025-06-06T21:37:00.852054,open step,,,"Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()"
+2025-06-06T21:37:00.852082,open step,,,Fuzzing Node 'KSTET'
+2025-06-06T21:37:00.852118,info,,,Sending 8 bytes...
+2025-06-06T21:37:00.852430,send,8,4b 53 54 45 54 20 0d 0a,b'KSTET \r\n'
+2025-06-06T21:37:00.852456,open step,,,Contact target monitors
+2025-06-06T21:37:00.852473,open step,,,Cleaning up connections from callbacks
+2025-06-06T21:37:00.852491,pass,,,No crash detected.
+2025-06-06T21:37:00.852506,open step,,,Sleep between tests.
+2025-06-06T21:37:00.852523,info,,,sleeping for 1.000000 seconds
+2025-06-06T21:37:01.864253,open test case,,,Test case 3: KSTET:[KSTET.KSTET-STRING:2]
+2025-06-06T21:37:01.864284,info,,,Type: String
+2025-06-06T21:37:01.864308,open step,,,"Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()"
+2025-06-06T21:37:01.864333,open step,,,Fuzzing Node 'KSTET'
+2025-06-06T21:37:01.864366,info,,,Sending 17 bytes...
+2025-06-06T21:37:01.864677,send,17,4b 53 54 45 54 20 24 28 72 65 62 6f 6f 74 29 0d 0a,b'KSTET $(reboot)\r\n'
+2025-06-06T21:37:01.864701,open step,,,Contact target monitors
+2025-06-06T21:37:01.864718,open step,,,Cleaning up connections from callbacks
+2025-06-06T21:37:01.864735,pass,,,No crash detected.
+2025-06-06T21:37:01.864750,open step,,,Sleep between tests.
+2025-06-06T21:37:01.864768,info,,,sleeping for 1.000000 seconds
+2025-06-06T21:37:02.874036,open test case,,,Test case 4: KSTET:[KSTET.KSTET-STRING:3]
+2025-06-06T21:37:02.874070,info,,,Type: String
+2025-06-06T21:37:02.874095,open step,,,"Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()"
+2025-06-06T21:37:02.874124,open step,,,Fuzzing Node 'KSTET'
+2025-06-06T21:37:02.874161,info,,,Sending 16 bytes...
+2025-06-06T21:37:02.874513,send,16,4b 53 54 45 54 20 24 3b 72 65 62 6f 6f 74 0d 0a,b'KSTET $;reboot\r\n'
+2025-06-06T21:37:02.874540,open step,,,Contact target monitors
+2025-06-06T21:37:02.874560,open step,,,Cleaning up connections from callbacks
+2025-06-06T21:37:02.874579,pass,,,No crash detected.
+2025-06-06T21:37:02.874594,open step,,,Sleep between tests.
+2025-06-06T21:37:02.874616,info,,,sleeping for 1.000000 seconds
+2025-06-06T21:37:03.887514,open test case,,,Test case 5: KSTET:[KSTET.KSTET-STRING:4]
+2025-06-06T21:37:03.887549,info,,,Type: String
+2025-06-06T21:37:03.887574,open step,,,"Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()"
+2025-06-06T21:37:03.887603,open step,,,Fuzzing Node 'KSTET'
+2025-06-06T21:37:03.887640,info,,,Sending 11 bytes...
+2025-06-06T21:37:03.887950,send,11,4b 53 54 45 54 20 25 30 30 0d 0a,b'KSTET %00\r\n'
+2025-06-06T21:37:03.887974,open step,,,Contact target monitors
+2025-06-06T21:37:03.887991,open step,,,Cleaning up connections from callbacks
+2025-06-06T21:37:03.888009,pass,,,No crash detected.
+2025-06-06T21:37:03.888025,open step,,,Sleep between tests.
+2025-06-06T21:37:03.888042,info,,,sleeping for 1.000000 seconds
+2025-06-06T21:37:04.936611,open test case,,,Test case 6: KSTET:[KSTET.KSTET-STRING:5]
+2025-06-06T21:37:04.936641,info,,,Type: String
+2025-06-06T21:37:04.936666,open step,,,"Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()"
+2025-06-06T21:37:04.936691,open step,,,Fuzzing Node 'KSTET'
+2025-06-06T21:37:04.936726,info,,,Sending 12 bytes...
+2025-06-06T21:37:04.937043,send,12,4b 53 54 45 54 20 25 30 30 2f 0d 0a,b'KSTET %00/\r\n'
+2025-06-06T21:37:04.937068,open step,,,Contact target monitors
+2025-06-06T21:37:04.937085,open step,,,Cleaning up connections from callbacks
+2025-06-06T21:37:04.937103,pass,,,No crash detected.
+2025-06-06T21:37:04.937118,open step,,,Sleep between tests.
+2025-06-06T21:37:04.937136,info,,,sleeping for 1.000000 seconds
+2025-06-06T21:37:05.967551,open test case,,,Test case 7: KSTET:[KSTET.KSTET-STRING:6]
+2025-06-06T21:37:05.967582,info,,,Type: String
+2025-06-06T21:37:05.967606,open step,,,"Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()"
+2025-06-06T21:37:05.967630,open step,,,Fuzzing Node 'KSTET'
+2025-06-06T21:37:05.967664,info,,,Sending 33 bytes...
+2025-06-06T21:37:05.967985,send,33,4b 53 54 45 54 20 25 30 31 25 30 32 25 30 33 25 30 34 25 30 61 25 30 64 25 30 61 41 44 53 46 0d 0a,b'KSTET %01%02%03%04%0a%0d%0aADSF\r\n'
+2025-06-06T21:37:05.968010,open step,,,Contact target monitors
+2025-06-06T21:37:05.968027,open step,,,Cleaning up connections from callbacks
+2025-06-06T21:37:05.968045,pass,,,No crash detected.
+2025-06-06T21:37:05.968061,open step,,,Sleep between tests.
+2025-06-06T21:37:05.968078,info,,,sleeping for 1.000000 seconds
+2025-06-06T21:37:06.977916,open test case,,,Test case 8: KSTET:[KSTET.KSTET-STRING:7]
+2025-06-06T21:37:06.977951,info,,,Type: String
+2025-06-06T21:37:06.978096,open step,,,"Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()"
+2025-06-06T21:37:06.978128,open step,,,Fuzzing Node 'KSTET'
+2025-06-06T21:37:06.978170,info,,,Sending 34 bytes...
+2025-06-06T21:37:06.978544,send,34,4b 53 54 45 54 20 25 30 31 25 30 32 25 30 33 40 25 30 34 25 30 61 25 30 64 25 30 61 41 44 53 46 0d 0a,b'KSTET %01%02%03@%04%0a%0d%0aADSF\r\n'
+2025-06-06T21:37:06.978574,open step,,,Contact target monitors
+2025-06-06T21:37:06.978592,open step,,,Cleaning up connections from callbacks
+2025-06-06T21:37:06.978619,pass,,,No crash detected.
+2025-06-06T21:37:06.978636,open step,,,Sleep between tests.
+2025-06-06T21:37:06.978655,info,,,sleeping for 1.000000 seconds
+2025-06-06T21:37:07.990025,open test case,,,Test case 9: KSTET:[KSTET.KSTET-STRING:8]
+2025-06-06T21:37:07.990056,info,,,Type: String
+2025-06-06T21:37:07.990080,open step,,,"Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()"
+2025-06-06T21:37:07.990105,open step,,,Fuzzing Node 'KSTET'
+2025-06-06T21:37:07.990140,info,,,Sending 22 bytes...
+2025-06-06T21:37:07.990543,send,22,4b 53 54 45 54 20 25 30 61 20 72 65 62 6f 6f 74 20 25 30 61 0d 0a,b'KSTET %0a reboot %0a\r\n'
+2025-06-06T21:37:07.990577,open step,,,Contact target monitors
+2025-06-06T21:37:07.990594,open step,,,Cleaning up connections from callbacks
+2025-06-06T21:37:07.990613,pass,,,No crash detected.
+2025-06-06T21:37:07.990629,open step,,,Sleep between tests.
+2025-06-06T21:37:07.990646,info,,,sleeping for 1.000000 seconds
+2025-06-06T21:37:09.229948,open test case,,,Test case 10: KSTET:[KSTET.KSTET-STRING:9]
+2025-06-06T21:37:09.229978,info,,,Type: String
+2025-06-06T21:37:09.230002,open step,,,"Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()"
+2025-06-06T21:37:09.230026,open step,,,Fuzzing Node 'KSTET'
+2025-06-06T21:37:09.230060,info,,,Sending 17 bytes...
+2025-06-06T21:37:09.230377,send,17,4b 53 54 45 54 20 25 30 41 72 65 62 6f 6f 74 0d 0a,b'KSTET %0Areboot\r\n'

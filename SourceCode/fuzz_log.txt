@@ -1,0 +1,187 @@
+[2025-06-06 17:36:59,559]     Info: Web interface can be found at http://localhost:26000
+[2025-06-06 17:36:59,561]     Info: Opening target connection (10.0.2.15:9999)...
+[2025-06-06 17:36:59,563]     Info: Connection opened.
+[2025-06-06 17:36:59,567] [33m[1mTest Case: 1: KSTET:[KSTET.KSTET-STRING:0][0m
+[2025-06-06 17:36:59,567]     Info: Type: String
+[2025-06-06 17:36:59,567]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:36:59,567]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:36:59,567]     Info: Sending 37 bytes...
+[2025-06-06 17:36:59,568]     [36mTransmitted 37 bytes: 4b 53 54 45 54 20 21 40 23 24 25 25 5e 23 24 25 23 24 40 23 24 25 24 24 40 23 24 25 5e 5e 2a 2a 28 28 29 0d 0a b'KSTET !@#$%%^#$%#$@#$%$$@#$%^^**(()\r\n'[0m
+[2025-06-06 17:36:59,568]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:36:59,568]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
+[2025-06-06 17:36:59,568]       [32m[1mCheck OK: No crash detected.[0m
+[2025-06-06 17:36:59,568]   [35m[1mTest Step: Sleep between tests.[0m
+[2025-06-06 17:36:59,568]     Info: sleeping for 1.000000 seconds
+[2025-06-06 17:37:00,851] [33m[1mTest Case: 2: KSTET:[KSTET.KSTET-STRING:1][0m
+[2025-06-06 17:37:00,852]     Info: Type: String
+[2025-06-06 17:37:00,852]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:37:00,852]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:37:00,852]     Info: Sending 8 bytes...
+[2025-06-06 17:37:00,852]     [36mTransmitted 8 bytes: 4b 53 54 45 54 20 0d 0a b'KSTET \r\n'[0m
+[2025-06-06 17:37:00,852]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:37:00,852]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
+[2025-06-06 17:37:00,852]       [32m[1mCheck OK: No crash detected.[0m
+[2025-06-06 17:37:00,852]   [35m[1mTest Step: Sleep between tests.[0m
+[2025-06-06 17:37:00,852]     Info: sleeping for 1.000000 seconds
+[2025-06-06 17:37:01,864] [33m[1mTest Case: 3: KSTET:[KSTET.KSTET-STRING:2][0m
+[2025-06-06 17:37:01,864]     Info: Type: String
+[2025-06-06 17:37:01,864]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:37:01,864]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:37:01,864]     Info: Sending 17 bytes...
+[2025-06-06 17:37:01,864]     [36mTransmitted 17 bytes: 4b 53 54 45 54 20 24 28 72 65 62 6f 6f 74 29 0d 0a b'KSTET $(reboot)\r\n'[0m
+[2025-06-06 17:37:01,864]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:37:01,864]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
+[2025-06-06 17:37:01,864]       [32m[1mCheck OK: No crash detected.[0m
+[2025-06-06 17:37:01,864]   [35m[1mTest Step: Sleep between tests.[0m
+[2025-06-06 17:37:01,864]     Info: sleeping for 1.000000 seconds
+[2025-06-06 17:37:02,874] [33m[1mTest Case: 4: KSTET:[KSTET.KSTET-STRING:3][0m
+[2025-06-06 17:37:02,874]     Info: Type: String
+[2025-06-06 17:37:02,874]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:37:02,874]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:37:02,874]     Info: Sending 16 bytes...
+[2025-06-06 17:37:02,874]     [36mTransmitted 16 bytes: 4b 53 54 45 54 20 24 3b 72 65 62 6f 6f 74 0d 0a b'KSTET $;reboot\r\n'[0m
+[2025-06-06 17:37:02,874]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:37:02,874]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
+[2025-06-06 17:37:02,874]       [32m[1mCheck OK: No crash detected.[0m
+[2025-06-06 17:37:02,874]   [35m[1mTest Step: Sleep between tests.[0m
+[2025-06-06 17:37:02,874]     Info: sleeping for 1.000000 seconds
+[2025-06-06 17:37:03,887] [33m[1mTest Case: 5: KSTET:[KSTET.KSTET-STRING:4][0m
+[2025-06-06 17:37:03,887]     Info: Type: String
+[2025-06-06 17:37:03,887]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:37:03,887]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:37:03,887]     Info: Sending 11 bytes...
+[2025-06-06 17:37:03,887]     [36mTransmitted 11 bytes: 4b 53 54 45 54 20 25 30 30 0d 0a b'KSTET %00\r\n'[0m
+[2025-06-06 17:37:03,887]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:37:03,887]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
+[2025-06-06 17:37:03,888]       [32m[1mCheck OK: No crash detected.[0m
+[2025-06-06 17:37:03,888]   [35m[1mTest Step: Sleep between tests.[0m
+[2025-06-06 17:37:03,888]     Info: sleeping for 1.000000 seconds
+[2025-06-06 17:37:04,936] [33m[1mTest Case: 6: KSTET:[KSTET.KSTET-STRING:5][0m
+[2025-06-06 17:37:04,936]     Info: Type: String
+[2025-06-06 17:37:04,936]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:37:04,936]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:37:04,936]     Info: Sending 12 bytes...
+[2025-06-06 17:37:04,937]     [36mTransmitted 12 bytes: 4b 53 54 45 54 20 25 30 30 2f 0d 0a b'KSTET %00/\r\n'[0m
+[2025-06-06 17:37:04,937]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:37:04,937]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
+[2025-06-06 17:37:04,937]       [32m[1mCheck OK: No crash detected.[0m
+[2025-06-06 17:37:04,937]   [35m[1mTest Step: Sleep between tests.[0m
+[2025-06-06 17:37:04,937]     Info: sleeping for 1.000000 seconds
+[2025-06-06 17:37:05,967] [33m[1mTest Case: 7: KSTET:[KSTET.KSTET-STRING:6][0m
+[2025-06-06 17:37:05,967]     Info: Type: String
+[2025-06-06 17:37:05,967]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:37:05,967]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:37:05,967]     Info: Sending 33 bytes...
+[2025-06-06 17:37:05,967]     [36mTransmitted 33 bytes: 4b 53 54 45 54 20 25 30 31 25 30 32 25 30 33 25 30 34 25 30 61 25 30 64 25 30 61 41 44 53 46 0d 0a b'KSTET %01%02%03%04%0a%0d%0aADSF\r\n'[0m
+[2025-06-06 17:37:05,968]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:37:05,968]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
+[2025-06-06 17:37:05,968]       [32m[1mCheck OK: No crash detected.[0m
+[2025-06-06 17:37:05,968]   [35m[1mTest Step: Sleep between tests.[0m
+[2025-06-06 17:37:05,968]     Info: sleeping for 1.000000 seconds
+[2025-06-06 17:37:06,977] [33m[1mTest Case: 8: KSTET:[KSTET.KSTET-STRING:7][0m
+[2025-06-06 17:37:06,977]     Info: Type: String
+[2025-06-06 17:37:06,978]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:37:06,978]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:37:06,978]     Info: Sending 34 bytes...
+[2025-06-06 17:37:06,978]     [36mTransmitted 34 bytes: 4b 53 54 45 54 20 25 30 31 25 30 32 25 30 33 40 25 30 34 25 30 61 25 30 64 25 30 61 41 44 53 46 0d 0a b'KSTET %01%02%03@%04%0a%0d%0aADSF\r\n'[0m
+[2025-06-06 17:37:06,978]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:37:06,978]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
+[2025-06-06 17:37:06,978]       [32m[1mCheck OK: No crash detected.[0m
+[2025-06-06 17:37:06,978]   [35m[1mTest Step: Sleep between tests.[0m
+[2025-06-06 17:37:06,978]     Info: sleeping for 1.000000 seconds
+[2025-06-06 17:37:07,990] [33m[1mTest Case: 9: KSTET:[KSTET.KSTET-STRING:8][0m
+[2025-06-06 17:37:07,990]     Info: Type: String
+[2025-06-06 17:37:07,990]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:37:07,990]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:37:07,990]     Info: Sending 22 bytes...
+[2025-06-06 17:37:07,990]     [36mTransmitted 22 bytes: 4b 53 54 45 54 20 25 30 61 20 72 65 62 6f 6f 74 20 25 30 61 0d 0a b'KSTET %0a reboot %0a\r\n'[0m
+[2025-06-06 17:37:07,990]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:37:07,990]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
+[2025-06-06 17:37:07,990]       [32m[1mCheck OK: No crash detected.[0m
+[2025-06-06 17:37:07,990]   [35m[1mTest Step: Sleep between tests.[0m
+[2025-06-06 17:37:07,990]     Info: sleeping for 1.000000 seconds
+[2025-06-06 17:37:09,229] [33m[1mTest Case: 10: KSTET:[KSTET.KSTET-STRING:9][0m
+[2025-06-06 17:37:09,229]     Info: Type: String
+[2025-06-06 17:37:09,229]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:37:09,230]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:37:09,230]     Info: Sending 17 bytes...
+[2025-06-06 17:37:09,230]     [36mTransmitted 17 bytes: 4b 53 54 45 54 20 25 30 41 72 65 62 6f 6f 74 0d 0a b'KSTET %0Areboot\r\n'[0m
+[2025-06-06 17:37:09,230]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:37:09,230]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
+[2025-06-06 17:37:09,230]       [32m[1mCheck OK: No crash detected.[0m
+[2025-06-06 17:37:09,230]   [35m[1mTest Step: Sleep between tests.[0m
+[2025-06-06 17:37:09,231]     Info: sleeping for 1.000000 seconds
+[2025-06-06 17:37:10,247] [33m[1mTest Case: 11: KSTET:[KSTET.KSTET-STRING:10][0m
+[2025-06-06 17:37:10,248]     Info: Type: String
+[2025-06-06 17:37:10,248]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:37:10,248]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:37:10,248]     Info: Sending 20 bytes...
+[2025-06-06 17:37:10,248]     [36mTransmitted 20 bytes: 4b 53 54 45 54 20 25 30 41 72 65 62 6f 6f 74 25 30 41 0d 0a b'KSTET %0Areboot%0A\r\n'[0m
+[2025-06-06 17:37:10,248]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:37:10,248]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
+[2025-06-06 17:37:10,248]       [32m[1mCheck OK: No crash detected.[0m
+[2025-06-06 17:37:10,248]   [35m[1mTest Step: Sleep between tests.[0m
+[2025-06-06 17:37:10,249]     Info: sleeping for 1.000000 seconds
+[2025-06-06 17:37:11,259] [33m[1mTest Case: 12: KSTET:[KSTET.KSTET-STRING:11][0m
+[2025-06-06 17:37:11,259]     Info: Type: String
+[2025-06-06 17:37:11,259]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:37:11,259]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:37:11,259]     Info: Sending 29 bytes...
+[2025-06-06 17:37:11,260]     [36mTransmitted 29 bytes: 4b 53 54 45 54 20 25 30 44 43 4d 44 3d 24 27 72 65 62 6f 6f 74 27 3b 24 43 4d 44 0d 0a b"KSTET %0DCMD=$'reboot';$CMD\r\n"[0m
+[2025-06-06 17:37:11,260]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:37:11,260]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
+[2025-06-06 17:37:11,260]       [32m[1mCheck OK: No crash detected.[0m
+[2025-06-06 17:37:11,260]   [35m[1mTest Step: Sleep between tests.[0m
+[2025-06-06 17:37:11,260]     Info: sleeping for 1.000000 seconds
+[2025-06-06 17:37:12,278] [33m[1mTest Case: 13: KSTET:[KSTET.KSTET-STRING:12][0m
+[2025-06-06 17:37:12,278]     Info: Type: String
+[2025-06-06 17:37:12,278]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:37:12,278]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:37:12,278]     Info: Sending 29 bytes...
+[2025-06-06 17:37:12,278]     [36mTransmitted 29 bytes: 4b 53 54 45 54 20 25 30 44 43 4d 44 3d 24 22 72 65 62 6f 6f 74 22 3b 24 43 4d 44 0d 0a b'KSTET %0DCMD=$"reboot";$CMD\r\n'[0m
+[2025-06-06 17:37:12,278]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:37:12,278]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
+[2025-06-06 17:37:12,278]       [32m[1mCheck OK: No crash detected.[0m
+[2025-06-06 17:37:12,278]   [35m[1mTest Step: Sleep between tests.[0m
+[2025-06-06 17:37:12,278]     Info: sleeping for 1.000000 seconds
+[2025-06-06 17:37:13,288] [33m[1mTest Case: 14: KSTET:[KSTET.KSTET-STRING:13][0m
+[2025-06-06 17:37:13,288]     Info: Type: String
+[2025-06-06 17:37:13,288]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:37:13,288]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:37:13,288]     Info: Sending 17 bytes...
+[2025-06-06 17:37:13,289]     [36mTransmitted 17 bytes: 4b 53 54 45 54 20 25 30 44 72 65 62 6f 6f 74 0d 0a b'KSTET %0Dreboot\r\n'[0m
+[2025-06-06 17:37:13,289]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:37:13,289]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
+[2025-06-06 17:37:13,289]       [32m[1mCheck OK: No crash detected.[0m
+[2025-06-06 17:37:13,289]   [35m[1mTest Step: Sleep between tests.[0m
+[2025-06-06 17:37:13,289]     Info: sleeping for 1.000000 seconds
+[2025-06-06 17:37:14,298] [33m[1mTest Case: 15: KSTET:[KSTET.KSTET-STRING:14][0m
+[2025-06-06 17:37:14,298]     Info: Type: String
+[2025-06-06 17:37:14,298]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:37:14,298]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:37:14,298]     Info: Sending 20 bytes...
+[2025-06-06 17:37:14,299]     [36mTransmitted 20 bytes: 4b 53 54 45 54 20 25 30 44 72 65 62 6f 6f 74 25 30 44 0d 0a b'KSTET %0Dreboot%0D\r\n'[0m
+[2025-06-06 17:37:14,299]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:37:14,299]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
+[2025-06-06 17:37:14,299]       [32m[1mCheck OK: No crash detected.[0m
+[2025-06-06 17:37:14,299]   [35m[1mTest Step: Sleep between tests.[0m
+[2025-06-06 17:37:14,299]     Info: sleeping for 1.000000 seconds
+[2025-06-06 17:37:15,319] [33m[1mTest Case: 16: KSTET:[KSTET.KSTET-STRING:15][0m
+[2025-06-06 17:37:15,319]     Info: Type: String
+[2025-06-06 17:37:15,319]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:37:15,319]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:37:15,319]     Info: Sending 14 bytes...
+[2025-06-06 17:37:15,320]     [36mTransmitted 14 bytes: 4b 53 54 45 54 20 25 3f 3f 25 00 3f 0d 0a b'KSTET %??%\x00?\r\n'[0m
+[2025-06-06 17:37:15,320]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:37:15,320]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
+[2025-06-06 17:37:15,320]       [32m[1mCheck OK: No crash detected.[0m
+[2025-06-06 17:37:15,320]   [35m[1mTest Step: Sleep between tests.[0m
+[2025-06-06 17:37:15,320]     Info: sleeping for 1.000000 seconds
+[2025-06-06 17:37:16,329] [33m[1mTest Case: 17: KSTET:[KSTET.KSTET-STRING:16][0m
+[2025-06-06 17:37:16,329]     Info: Type: String
+[2025-06-06 17:37:16,329]   [35m[1mTest Step: Monitor CallbackMonitor#140647459670400[pre=[],post=[],restart=[],post_start_target=[]].pre_send()[0m
+[2025-06-06 17:37:16,329]   [35m[1mTest Step: Fuzzing Node 'KSTET'[0m
+[2025-06-06 17:37:16,329]     Info: Sending 128 bytes...
+[2025-06-06 17:37:16,330]     [36mTransmitted 128 bytes: 4b 53 54 45 54 20 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 25 3f 3f 25 01 3f 0d 0a b'KSTET %??%\x01?%??%\x01?%??%\x01?%??%\x01?%??%\x01?%??%\x01?%??%\x01?%??%\x01?%??%\x01?%??%\x01?%??%\x01?%??%\x01?%??%\x01?%??%\x01?%??%\x01?%??%\x01?%??%\x01?%??%\x01?%??%\x01?%??%\x01?\r\n'[0m
+[2025-06-06 17:37:16,330]   [35m[1mTest Step: Contact target monitors[0m
+[2025-06-06 17:37:16,330]   [35m[1mTest Step: Cleaning up connections from callbacks[0m
