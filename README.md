@@ -578,9 +578,9 @@ The diagram below shows the stack layout when the malicious string is injected o
    |-----------------------------------|
    | b'C' * (24)                       |
    |-----------------------------------|
----| b'\xeb\xc2'                       | # JMP SHORT <---
+-②-| b'\xeb\xc2'                       | # JMP SHORT <---
 |  |-----------------------------------|                |
-|  | struct.pack('<L', 0x625026D3)     | # JMP ESP   ----
+|  | struct.pack('<L', 0x625026D3)     | # JMP ESP   -①--
 |  |-----------------------------------|
 |  | b'A' * (58 - len(SHELL_LIB) - 2)  |
 |  |-----------------------------------|
