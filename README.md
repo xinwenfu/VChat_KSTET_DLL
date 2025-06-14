@@ -13,6 +13,9 @@ DLLs are [Dynamic-Link-Libraries](https://learn.microsoft.com/en-us/troubleshoot
 > [!IMPORTANT]
 > Please setup the Windows and Linux systems as described in [SystemSetup](./SystemSetup/README.md)!
 
+## Vieo Demo
+[![Video demo](https://img.youtube.com/vi/Z_LSCnutWLs/mqdefault.jpg)](https://youtu.be/Z_LSCnutWLs)
+
 ## Exploitation
 > [!IMPORTANT]
 > The offsets and addresses shown in the following screenshots may differ from those used in the python and ruby code in this repository. This is because the offsets change slightly between the Windows 10 version of VChat compiled with GCC and the Windows 11 version compiled with the Visual Studio compiler.
